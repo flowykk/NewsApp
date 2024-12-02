@@ -16,46 +16,55 @@ public enum HttpMethod: String {
 }
 
 public enum API {
-    case getHeroes
-    case getHeroImage(imageName: String)
+    case getNews(keyword: String, page: Int, pageSize: Int)
+    case getNewsImage(imageURL: String)
 }
 
 extension API: TargetType {
 
     public var baseURL: URL {
         switch self {
-        case .getHeroes:
-            return URL(string: "https://assets.deadlock-api.com")!
-        case .getHeroImage(let image):
-            return URL(string: image) ??
-                URL(string: "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png")!
+        case .getNews:
+            return URL(string: "https://newsapi.org")!
+        case .getNewsImage(let imageURL):
+            return URL(string: imageURL)!
         }
     }
 
     public var path: String {
         switch self {
-        case .getHeroes:
-            return "/v2/heroes"
-        case .getHeroImage:
+        case .getNews:
+            return "/v2/everything"
+        case .getNewsImage:
             return ""
         }
     }
 
     public var method: Moya.Method {
         switch self {
-        case .getHeroes:
+        case .getNews:
             return .get
-        case .getHeroImage:
+        case .getNewsImage:
             return .get
         }
     }
 
     public var task: Task {
-        return .requestPlain
+        switch self {
+        case .getNews(let keyword, let page, let pageSize):
+            return .requestParameters(
+                parameters: ["q": keyword, "page": page, "pageSize": pageSize],
+                encoding: URLEncoding.queryString
+            )
+        default:
+            return .requestPlain
+        }
     }
 
     public var headers: [String: String]? {
-        return nil
+        return [
+            "x-api-key": "779f499fe6b24cf98b6f3931221f34c9"
+        ]
     }
 
     public var sampleData: Data {

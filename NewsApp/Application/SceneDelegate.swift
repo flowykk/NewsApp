@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let view = ViewController()
+        let view = NewsBuilder.build()
         window.rootViewController = UINavigationController(rootViewController: view)
 
         self.window = window

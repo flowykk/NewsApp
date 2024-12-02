@@ -11,8 +11,8 @@ import Moya
 public protocol Networkable {
     var provider: MoyaProvider<API> { get }
 
-    func fetchHeroes<T: Codable>(completion: @escaping (Result<T, Error>) -> Void)
-    func fetchHeroImage(for image: String, completion: @escaping (Result<Data, Error>) -> Void)
+    func fetchNews<T: Codable>(about keyword: String, page: Int, pageSize: Int, completion: @escaping (Result<T, Error>) -> Void)
+    func fetchNewsImage(for imageURL: String, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
 public final class NetworkManager: Networkable {
@@ -21,18 +21,18 @@ public final class NetworkManager: Networkable {
 
     nonisolated(unsafe) public static let shared = NetworkManager()
 
-    public func fetchHeroes<T: Codable>(completion: @escaping (Result<T, Error>) -> Void) {
-        moyaRequest(API.getHeroes, completion: completion)
+    public func fetchNews<T: Codable>(about keyword: String, page: Int, pageSize: Int, completion: @escaping (Result<T, Error>) -> Void) {
+        request(API.getNews(keyword: keyword, page: page, pageSize: pageSize), completion: completion)
     }
 
-    public func fetchHeroImage(for image: String, completion: @escaping (Result<Data, Error>) -> Void) {
-        moyaRequest(API.getHeroImage(imageName: image), completion: completion)
+    public func fetchNewsImage(for imageURL: String, completion: @escaping (Result<Data, Error>) -> Void) {
+        request(API.getNewsImage(imageURL: imageURL), completion: completion)
     }
 }
 
 extension NetworkManager {
 
-    private func moyaRequest<T: Codable>(_ target: API, completion: @escaping (Result<T, Error>) -> Void) {
+    private func request<T: Codable>(_ target: API, completion: @escaping (Result<T, Error>) -> Void) {
         provider.request(target) { result in
             switch result {
             case let .success(response):
