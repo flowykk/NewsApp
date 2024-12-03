@@ -25,7 +25,7 @@ final class HistoryDataManager: HistoryDataPersistable {
     
     func saveSearch(_ search: SearchHistoryItem) {
         var searches = fetchSearches()
-        searches.append(search)
+        searches.insert(search, at: 0)
         
         if let encoded = try? JSONEncoder().encode(searches) {
             UserDefaults.standard.set(encoded, forKey: searchHistoryKey)

@@ -108,7 +108,6 @@ extension HistoryViewController {
     private func configureSearchHistoryItemsLabel() {
         searchHistoryItemsLabel.textAlignment = .center
         searchHistoryItemsLabel.sizeToFit()
-        //searchHistoryItemsLabel.text = "0 Items"
         searchHistoryItemsLabel.textColor = .gray
         searchHistoryItemsLabel.font = .systemFont(ofSize: 14, weight: .medium)
              
@@ -138,7 +137,6 @@ extension HistoryViewController {
 extension HistoryViewController: HistoryTableViewDelegate {
     
     func didDeleteRow(with search: SearchHistoryItem) {
-        print(1)
         viewModel?.deleteFromHistory(search: search)
     }
 }
