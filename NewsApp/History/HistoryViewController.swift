@@ -3,10 +3,12 @@ import SnapKit
 
 final class HistoryViewController: UIViewController {
     
+    private let tableView = HistoryTableView()
+    
     var viewModel: HistoryViewModelDelegate? {
         didSet {
-            viewModel?.didFetchedHistory = { history in // [weak self]
-                //print(history)
+            viewModel?.didFetchedHistory = { [weak self] history in
+                self?.tableView.setData(with: history)
             }
             viewModel?.fetchHistory()
         }
@@ -39,6 +41,8 @@ extension HistoryViewController {
     private func configureUI() {
         configureNavigationBar()
         configureBackButton()
+        
+        configureTableView()
     }
     
     private func configureNavigationBar() {
@@ -58,6 +62,23 @@ extension HistoryViewController {
             action: #selector(backButtonTapped)
         )
         navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    private func configureTableView() {
+        tableView.customDelegate = self
+        
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+}
+
+extension HistoryViewController: HistoryTableViewDelegate {
+    
+    func didDeleteRow(with search: SearchHistoryItem) {
+        print(1)
+        viewModel?.deleteFromHistory(search: search)
     }
 }
 

@@ -1,5 +1,5 @@
 import Foundation
 
-struct SearchHistoryItem {
+struct SearchHistoryItem: Codable {
     let title: String
 }

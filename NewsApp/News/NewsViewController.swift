@@ -159,6 +159,7 @@ extension NewsViewController: UISearchBarDelegate {
         
         searchTextLabel.text = "News about \(searchText)"
         viewModel?.fetchNews(keyword: searchText, page: 1, pageSize: 10)
+        viewModel?.saveToHistory(search: searchText)
         
         searchBar.resignFirstResponder()
     }

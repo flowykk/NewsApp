@@ -6,6 +6,8 @@ protocol HistoryViewModelDelegate: AnyObject {
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)? { get set }
     
     func fetchHistory()
+    func deleteFromHistory(search: SearchHistoryItem)
+    
     func backButtonTapped()
 }
 
@@ -20,11 +22,11 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)?
     
     func fetchHistory() {
-        history = [
-            SearchHistoryItem(title: "Apple"),
-            SearchHistoryItem(title: "Google"),
-            SearchHistoryItem(title: "Microsoft")
-        ]
+        history = HistoryDataManager.shared.getSearches()
+    }
+    
+    func deleteFromHistory(search: SearchHistoryItem) {
+        HistoryDataManager.shared.removeSearch(search)
     }
     
     func backButtonTapped() {
