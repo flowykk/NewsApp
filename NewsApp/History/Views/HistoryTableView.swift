@@ -32,9 +32,10 @@ final class HistoryTableView: UITableView {
     private func commonInit() {
         delegate = self
         dataSource = self
-        register(UITableViewCell.self , forCellReuseIdentifier: "historyCell")
+        register(HistoryCell.self , forCellReuseIdentifier: "historyCell")
         
-        rowHeight = 50
+        rowHeight = UITableView.automaticDimension
+        estimatedRowHeight = 50
     }
 }
 
@@ -45,11 +46,10 @@ extension HistoryTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "historyCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "historyCell", for: indexPath) as! HistoryCell
         
         let item = history[indexPath.row]
-        cell.textLabel?.text = item.title
-        cell.selectionStyle = .none // TODO: remove this
+        cell.set(with: item)
         
         return cell
     }

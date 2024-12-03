@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 final class NewsCell: UITableViewCell {
     
@@ -40,7 +41,7 @@ final class NewsCell: UITableViewCell {
         newsAuthorLabel.text = "/ " + (article.source?.name ?? "no source")
         
         guard let urlToImageString = article.urlToImage,
-              let urlToImage = URL(string: urlToImageString)
+              let _ = URL(string: urlToImageString)
         else {
             activityIndicator.stopAnimating()
             
