@@ -27,7 +27,10 @@ extension API: TargetType {
         case .getNews:
             return URL(string: "https://newsapi.org")!
         case .getNewsImage(let imageURL):
-            return URL(string: imageURL)!
+            guard let url = URL(string: imageURL) else {
+                return URL(string: "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png")!
+            }
+            return url
         }
     }
 

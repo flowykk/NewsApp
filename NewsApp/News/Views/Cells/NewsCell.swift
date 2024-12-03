@@ -14,6 +14,7 @@ final class NewsCell: UITableViewCell {
     var viewModel: NewsImageViewModelDelegate? {
         didSet {
             activityIndicator.startAnimating()
+            newsImageView.image = nil
             viewModel?.didFetchedNewsImage = { [weak self] image in
                 DispatchQueue.main.async {
                     self?.activityIndicator.stopAnimating()
@@ -65,9 +66,10 @@ extension NewsCell {
     private func configureActivityIndicator() {
         addSubview(activityIndicator)
         activityIndicator.snp.makeConstraints { make in
-//            make.width.equalTo(300)
-//            make.centerX.equalTo(self)
-//            make.centerY.equalTo(self)
+            make.top.equalTo(self).offset(20)
+            make.width.equalTo(UIScreen.main.bounds.width * 0.90)
+            make.height.equalTo(150)
+            make.centerX.equalTo(self)
         }
     }
 

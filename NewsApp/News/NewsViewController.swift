@@ -21,7 +21,18 @@ final class NewsViewController: UIViewController {
 extension NewsViewController {
     
     private func configureUI() {
+        configureSearchBar()
         configureTableView()
+    }
+    
+    private func configureSearchBar() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search articles"
+        searchController.searchBar.delegate = self
+        
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
     }
     
     private func configureTableView() {
@@ -32,3 +43,10 @@ extension NewsViewController {
     }
 }
 
+extension NewsViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchText = searchBar.text, !searchText.isEmpty else { return }
+        tableView.viewModel?.fetchNews(keyword: searchText, page: 1, pageSize: 10)
+        searchBar.resignFirstResponder()
+    }
+}

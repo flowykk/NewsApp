@@ -13,7 +13,7 @@ final class NewsTableView: UITableView {
                     self?.reloadData()
                 }
             }
-            viewModel?.fetchNews()
+            viewModel?.fetchNews(keyword: "putin", page: 1, pageSize: 10)
         }
     }
     
@@ -32,7 +32,6 @@ final class NewsTableView: UITableView {
         dataSource = self
         register(NewsCell.self , forCellReuseIdentifier: "newsCell")
         
-        //rowHeight = 600
         rowHeight = UITableView.automaticDimension
         estimatedRowHeight = 600
     }

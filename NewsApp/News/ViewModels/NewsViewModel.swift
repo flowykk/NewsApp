@@ -6,7 +6,7 @@ protocol NewsViewModelDelegate: AnyObject {
     var response: NewsResponse { get set }
     var didFetchedNews: ((NewsResponse) -> Void)? { get set }
     
-    func fetchNews()
+    func fetchNews(keyword: String, page: Int, pageSize: Int)
 }
 
 final class NewsViewModel: NewsViewModelDelegate {
@@ -19,8 +19,8 @@ final class NewsViewModel: NewsViewModelDelegate {
     }
     var didFetchedNews: ((NewsResponse) -> Void)?
     
-    func fetchNews() {
-        NetworkManager.shared.fetchNews(about: "ElonMusk", page: 1, pageSize: 100) { (result: Result<NewsResponse, Error>) in
+    func fetchNews(keyword: String, page: Int, pageSize: Int) {
+        NetworkManager.shared.fetchNews(about: keyword, page: page, pageSize: pageSize) { (result: Result<NewsResponse, Error>) in
             switch result {
             case .success(let response):
                 self.response = response
