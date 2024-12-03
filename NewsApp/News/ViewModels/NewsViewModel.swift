@@ -44,7 +44,7 @@ final class NewsViewModel: NewsViewModelDelegate {
     
     func saveToHistory(title: String, totalResults: String, searchDate: String) {
         let item = SearchHistoryItem(title: title, totalResults: totalResults, searchDate: searchDate)
-        HistoryDataManager.shared.saveSearchSearch(item)
+        HistoryDataManager.shared.saveSearch(item)
     }
     
     func articleDidTapped(with urlString: String) {

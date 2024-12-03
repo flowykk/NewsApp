@@ -23,7 +23,7 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)?
     
     func fetchHistory() {
-        history = HistoryDataManager.shared.getSearches()
+        history = HistoryDataManager.shared.fetchSearches()
     }
     
     func deleteFromHistory(search: SearchHistoryItem) {
@@ -39,6 +39,6 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     }
     
     private func clearHistory() {
-        HistoryDataManager.shared.removeAllSearches()
+        HistoryDataManager.shared.clearSearches()
     }
 }

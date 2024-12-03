@@ -1,10 +1,10 @@
 import Foundation
 
 protocol HistoryDataPersistable {
-    func saveSearchSearch(_ search: SearchHistoryItem)
-    func getSearches() -> [SearchHistoryItem]
+    func saveSearch(_ search: SearchHistoryItem)
+    func fetchSearches() -> [SearchHistoryItem]
     func removeSearch(_ search: SearchHistoryItem)
-    func removeAllSearches()
+    func clearSearches()
 }
 
 final class HistoryDataManager: HistoryDataPersistable {
@@ -13,16 +13,7 @@ final class HistoryDataManager: HistoryDataPersistable {
     
     private let searchHistoryKey = "searchHistoryKey"
     
-    func saveSearchSearch(_ search: SearchHistoryItem) {
-        var searches = getSearches()
-        searches.append(search)
-        
-        if let encoded = try? JSONEncoder().encode(searches) {
-            UserDefaults.standard.set(encoded, forKey: searchHistoryKey)
-        }
-    }
-    
-    func getSearches() -> [SearchHistoryItem] {
+    func fetchSearches() -> [SearchHistoryItem] {
         if let savedData = UserDefaults.standard.data(forKey: searchHistoryKey),
             let decoded = try? JSONDecoder().decode([SearchHistoryItem].self, from: savedData) {
                 return decoded
@@ -31,8 +22,17 @@ final class HistoryDataManager: HistoryDataPersistable {
         return []
     }
     
+    func saveSearch(_ search: SearchHistoryItem) {
+        var searches = fetchSearches()
+        searches.append(search)
+        
+        if let encoded = try? JSONEncoder().encode(searches) {
+            UserDefaults.standard.set(encoded, forKey: searchHistoryKey)
+        }
+    }
+    
     func removeSearch(_ search: SearchHistoryItem) {
-        var searches = getSearches()
+        var searches = fetchSearches()
         
         if let index = searches.firstIndex(where: { $0.title == search.title }) {
             searches.remove(at: index)
@@ -43,7 +43,7 @@ final class HistoryDataManager: HistoryDataPersistable {
         }
     }
     
-    func removeAllSearches() {
+    func clearSearches() {
         UserDefaults.standard.removeObject(forKey: searchHistoryKey)
     }
 }
