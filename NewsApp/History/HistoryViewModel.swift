@@ -2,27 +2,32 @@ import Foundation
 
 protocol HistoryViewModelDelegate: AnyObject {
     var router: HistoryRouterProtocol? { get set }
-    var data: [SearchHistoryItem] { get set }
+    var history: [SearchHistoryItem] { get set }
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)? { get set }
     
     func fetchHistory()
+    func backButtonTapped()
 }
 
 final class HistoryViewModel: HistoryViewModelDelegate {
     var router: HistoryRouterProtocol?
     
-    var data = [SearchHistoryItem]() {
+    var history = [SearchHistoryItem]() {
         didSet {
-            didFetchedHistory?(data)
+            didFetchedHistory?(history)
         }
     }
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)?
     
     func fetchHistory() {
-        data = [
+        history = [
             SearchHistoryItem(title: "Apple"),
             SearchHistoryItem(title: "Google"),
             SearchHistoryItem(title: "Microsoft")
         ]
+    }
+    
+    func backButtonTapped() {
+        router?.navigateToNews()
     }
 }

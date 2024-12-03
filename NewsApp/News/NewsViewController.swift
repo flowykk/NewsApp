@@ -21,8 +21,14 @@ final class NewsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.delegate = self
         
         configureUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.delegate = self
     }
 }
 
@@ -30,7 +36,7 @@ extension NewsViewController {
     
     @objc
     private func historyButtonTapped() {
-        print("his")
+        viewModel?.historyButtonTapped()
     }
     
     @objc
@@ -155,5 +161,22 @@ extension NewsViewController: UISearchBarDelegate {
         viewModel?.fetchNews(keyword: searchText, page: 1, pageSize: 10)
         
         searchBar.resignFirstResponder()
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+extension NewsViewController: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        animationControllerFor operation: UINavigationController.Operation,
+        from fromVC: UIViewController,
+        to toVC: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        if operation == .push {
+            if toVC is HistoryViewController {
+                return PushTransitioning()
+            }
+        }
+        return nil
     }
 }

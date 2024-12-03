@@ -8,6 +8,7 @@ protocol NewsViewModelDelegate: AnyObject {
     
     func fetchNews(keyword: String, page: Int, pageSize: Int)
     func articleDidTapped(with urlString: String)
+    func historyButtonTapped()
 }
 
 final class NewsViewModel: NewsViewModelDelegate {
@@ -34,5 +35,9 @@ final class NewsViewModel: NewsViewModelDelegate {
     
     func articleDidTapped(with urlString: String) {
         router?.showArticleInBrowser(urlString: urlString)
+    }
+    
+    func historyButtonTapped() {
+        router?.navigateToHistory()
     }
 }
