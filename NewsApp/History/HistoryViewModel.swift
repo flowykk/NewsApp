@@ -8,6 +8,7 @@ protocol HistoryViewModelDelegate: AnyObject {
     func fetchHistory()
     func deleteFromHistory(search: SearchHistoryItem)
     
+    func clearHistoryButtonTapped()
     func backButtonTapped()
 }
 
@@ -31,5 +32,13 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     
     func backButtonTapped() {
         router?.navigateToNews()
+    }
+    
+    func clearHistoryButtonTapped() {
+        clearHistory()
+    }
+    
+    private func clearHistory() {
+        HistoryDataManager.shared.removeAllSearches()
     }
 }

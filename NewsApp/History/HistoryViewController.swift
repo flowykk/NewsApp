@@ -34,12 +34,19 @@ extension HistoryViewController {
     private func backButtonTapped() {
         viewModel?.backButtonTapped()
     }
+    
+    @objc
+    private func clearHistoryButtonTapped() {
+        viewModel?.clearHistoryButtonTapped()
+        viewModel?.fetchHistory()
+    }
 }
 
 extension HistoryViewController {
     
     private func configureUI() {
         configureNavigationBar()
+        configureClearHistoryButton()
         configureBackButton()
         
         configureTableView()
@@ -48,6 +55,19 @@ extension HistoryViewController {
     private func configureNavigationBar() {
         navigationItem.hidesBackButton = true
         navigationItem.title = "Search History"
+    }
+    
+    private func configureClearHistoryButton() {
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "trash.fill", withConfiguration: configuration)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(clearHistoryButtonTapped))
+        navigationItem.leftBarButtonItem?.tintColor = .systemPink
     }
     
     private func configureBackButton() {

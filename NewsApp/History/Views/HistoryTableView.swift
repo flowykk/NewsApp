@@ -49,6 +49,7 @@ extension HistoryTableView: UITableViewDelegate, UITableViewDataSource {
         
         let item = history[indexPath.row]
         cell.textLabel?.text = item.title
+        cell.selectionStyle = .none // TODO: remove this
         
         return cell
     }
