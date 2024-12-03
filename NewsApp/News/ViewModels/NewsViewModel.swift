@@ -28,6 +28,12 @@ final class NewsViewModel: NewsViewModelDelegate {
             switch result {
             case .success(let response):
                 self.response = response
+                
+                self.saveToHistory(
+                    title: keyword,
+                    totalResults: "\(response.totalResults ?? 0) Results",
+                    searchDate: Date().formattedDate()
+                )
             case .failure(let error):
                 // TODO: handle error with UI Alert
                 print(error)
