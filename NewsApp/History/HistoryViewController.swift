@@ -3,12 +3,17 @@ import SnapKit
 
 final class HistoryViewController: UIViewController {
     
+    private let titleView = UIView()
+    private let searchHistoryLabel = UILabel()
+    private let searchHistoryItemsLabel = UILabel()
+    
     private let tableView = HistoryTableView()
     
     var viewModel: HistoryViewModelDelegate? {
         didSet {
             viewModel?.didFetchedHistory = { [weak self] history in
                 self?.tableView.setData(with: history)
+                self?.searchHistoryItemsLabel.text = "\(history.count) Items"
             }
             viewModel?.fetchHistory()
         }
@@ -45,16 +50,17 @@ extension HistoryViewController {
 extension HistoryViewController {
     
     private func configureUI() {
-        configureNavigationBar()
+        configureTitleView()
         configureClearHistoryButton()
         configureBackButton()
+        configureNavigationBar()
         
         configureTableView()
     }
     
     private func configureNavigationBar() {
         navigationItem.hidesBackButton = true
-        navigationItem.title = "Search History"
+        navigationItem.titleView = titleView
     }
     
     private func configureClearHistoryButton() {
@@ -82,6 +88,41 @@ extension HistoryViewController {
             action: #selector(backButtonTapped)
         )
         navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    private func configureSearchHistoryLabel() {
+        searchHistoryLabel.textAlignment = .center
+        searchHistoryLabel.text = "Search History"
+        searchHistoryLabel.sizeToFit()
+        searchHistoryLabel.textColor = .black
+        searchHistoryLabel.font = .systemFont(ofSize: 17, weight: .bold)
+        
+        titleView.addSubview(searchHistoryLabel)
+        searchHistoryLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleView)
+            make.centerX.equalTo(titleView)
+            make.width.equalTo(UIScreen.main.bounds.width * 0.6)
+        }
+    }
+    
+    private func configureSearchHistoryItemsLabel() {
+        searchHistoryItemsLabel.textAlignment = .center
+        searchHistoryItemsLabel.sizeToFit()
+        //searchHistoryItemsLabel.text = "0 Items"
+        searchHistoryItemsLabel.textColor = .gray
+        searchHistoryItemsLabel.font = .systemFont(ofSize: 14, weight: .medium)
+             
+        titleView.addSubview(searchHistoryItemsLabel)
+        searchHistoryItemsLabel.snp.makeConstraints { make in
+            make.top.equalTo(searchHistoryLabel.snp.bottom)
+            make.bottom.equalTo(titleView).offset(-5)
+            make.centerX.equalTo(titleView)
+        }
+    }
+    
+    private func configureTitleView() {
+        configureSearchHistoryLabel()
+        configureSearchHistoryItemsLabel()
     }
     
     private func configureTableView() {
