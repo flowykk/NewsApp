@@ -95,6 +95,13 @@ extension NewsViewController {
     }
 }
 
+extension NewsViewController: NewsTableViewDelegate {
+    
+    func didSelectRow(with article: Article) {
+        viewModel?.articleDidTapped(with: article.url ?? "")
+    }
+}
+
 extension NewsViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

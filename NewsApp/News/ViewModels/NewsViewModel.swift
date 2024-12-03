@@ -7,6 +7,7 @@ protocol NewsViewModelDelegate: AnyObject {
     var didFetchedNews: ((NewsResponse) -> Void)? { get set }
     
     func fetchNews(keyword: String, page: Int, pageSize: Int)
+    func articleDidTapped(with urlString: String)
 }
 
 final class NewsViewModel: NewsViewModelDelegate {
@@ -29,5 +30,9 @@ final class NewsViewModel: NewsViewModelDelegate {
                 print(error)
             }
         }
+    }
+    
+    func articleDidTapped(with urlString: String) {
+        router?.showArticleInBrowser(urlString: urlString)
     }
 }

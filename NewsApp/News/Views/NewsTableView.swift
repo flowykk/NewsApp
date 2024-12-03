@@ -1,6 +1,13 @@
 import UIKit
 
+protocol NewsTableViewDelegate: AnyObject {
+    
+    func didSelectRow(with article: Article)
+}
+
 final class NewsTableView: UITableView {
+    
+    weak var customDelegate: NewsTableViewDelegate?
     
     var articles: [Article] = []
     
@@ -45,5 +52,9 @@ extension NewsTableView: UITableViewDelegate, UITableViewDataSource {
         cell.set(with: article)
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        customDelegate?.didSelectRow(with: articles[indexPath.row])
     }
 }
