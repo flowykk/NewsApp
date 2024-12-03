@@ -6,7 +6,7 @@ import NetworkKit
 protocol NewsImageViewModelDelegate {
     
     var image: UIImage? { get set }
-    var didFetchedNewsImage: ((UIImage) -> Void)? { get set}
+    var didFetchedNewsImage: ((UIImage?) -> Void)? { get set}
     
     func fetchNewsImage(for imageURL: String)
 }
@@ -15,17 +15,15 @@ final class NewsImageViewModel: NewsImageViewModelDelegate {
     
     var image: UIImage? {
         didSet {
-            didFetchedNewsImage?(image ?? UIImage(named: "placeholder")!)
+            didFetchedNewsImage?(image)
         }
     }
-    var didFetchedNewsImage: ((UIImage) -> Void)?
+    var didFetchedNewsImage: ((UIImage?) -> Void)?
     
     func fetchNewsImage(for imageURL: String) {
-        print(imageURL)
         NetworkManager.shared.fetchNewsImage(for: imageURL) { result in
             switch result {
             case .success(let data):
-                print(3)
                 self.image = UIImage(data: data)?.resize(toDimension: 512)
             case .failure(let error):
                 print(error)

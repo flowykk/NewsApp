@@ -15,7 +15,7 @@ final class NewsViewController: UIViewController {
                 self?.totalResultsLabel.text = "\(response.totalResults ?? 0) Results"
                 self?.tableView.setData(with: response.articles)
             }
-            viewModel?.fetchNews(keyword: "Elon Musk", page: 1, pageSize: 10)
+            viewModel?.fetchNews(keyword: "food", page: 1, pageSize: 100)
         }
     }
     
