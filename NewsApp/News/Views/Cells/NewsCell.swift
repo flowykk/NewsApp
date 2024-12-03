@@ -18,7 +18,11 @@ final class NewsCell: UITableViewCell {
             viewModel?.didFetchedNewsImage = { [weak self] image in
                 DispatchQueue.main.async {
                     self?.activityIndicator.stopAnimating()
+                    
                     self?.newsImageView.image = image
+                    self?.newsImageView.snp.makeConstraints { make in
+                        make.height.equalTo(150)
+                    }
                 }
             }
         }
@@ -45,17 +49,25 @@ final class NewsCell: UITableViewCell {
         else {
             activityIndicator.stopAnimating()
             
-            newsImageView.image = nil
-            newsImageView.snp.makeConstraints { make in
-                make.height.equalTo(0)
-            }
-            newsTitleLabel.snp.makeConstraints { make in
-                make.top.equalTo(self).offset(15)
-            }
+            newsImageView.image = UIImage(named: "placeholder")
+            
+//            newsImageView.image = nil
+//            newsImageView.snp.makeConstraints { make in
+//                make.height.equalTo(0)
+//            }
+//            newsTitleLabel.snp.makeConstraints { make in
+//                make.top.equalTo(self).offset(15)
+//            }
                 
             return
         }
-        viewModel?.fetchNewsImage(for: urlToImageString)
+        
+        if let savedImage = LocalFileManager.shared.getImage(urlToArticle: article.url ?? "", folderName: "news_images") {
+            activityIndicator.stopAnimating()
+            newsImageView.image = savedImage
+        } else {
+            viewModel?.fetchNewsImage(for: article)
+        }
     }
 }
 

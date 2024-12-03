@@ -10,6 +10,7 @@ protocol HistoryDataPersistable {
 final class HistoryDataManager: HistoryDataPersistable {
     
     static let shared = HistoryDataManager()
+    private init() { }
     
     private let searchHistoryKey = "searchHistoryKey"
     

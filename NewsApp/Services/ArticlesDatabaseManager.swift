@@ -19,7 +19,7 @@ final class ArticlesDatabaseManager: ArticlesDatabasePersistable {
     var container: ModelContainer?
     var context: ModelContext?
     
-    init() {
+    private init() {
         do {
             let schema = Schema([ArticleDTO.self])
             container = try ModelContainer(for: schema, configurations: [])
