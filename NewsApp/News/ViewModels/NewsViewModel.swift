@@ -7,7 +7,7 @@ protocol NewsViewModelDelegate: AnyObject {
     var didFetchedNews: ((NewsResponse) -> Void)? { get set }
     
     func fetchNews(keyword: String, page: Int, pageSize: Int)
-    func saveToHistory(search: String)
+    func saveToHistory(title: String, totalResults: Int, searchDate: String)
     
     func articleDidTapped(with urlString: String)
     func historyButtonTapped()
@@ -35,8 +35,8 @@ final class NewsViewModel: NewsViewModelDelegate {
         }
     }
     
-    func saveToHistory(search: String) {
-        let item = SearchHistoryItem(title: search)
+    func saveToHistory(title: String, totalResults: Int, searchDate: String) {
+        let item = SearchHistoryItem(title: title, totalResults: totalResults, searchDate: searchDate)
         HistoryDataManager.shared.saveSearchSearch(item)
     }
     
