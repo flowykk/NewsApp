@@ -3,6 +3,9 @@ import SnapKit
 
 final class NewsCell: UITableViewCell {
     
+    private var article: Article?
+    private var isFavourite = false
+    
     private var myViewHeightConstraint: NSLayoutConstraint!
     
     private let activityIndicator = UIActivityIndicatorView()
@@ -11,6 +14,7 @@ final class NewsCell: UITableViewCell {
     private let newsDescriptionLabel = UILabel()
     private let newsDateLabel = UILabel()
     private let newsAuthorLabel = UILabel()
+    private let favouriteButton = UIButton()
 
     var viewModel: NewsImageViewModelDelegate? {
         didSet {
@@ -39,6 +43,8 @@ final class NewsCell: UITableViewCell {
     }
 
     func set(with article: Article) {
+        self.article = article
+        
         newsTitleLabel.text = article.title
         newsDescriptionLabel.text = article.description
         newsDateLabel.text = article.publishedAt?.toFormattedDate()
@@ -62,20 +68,70 @@ final class NewsCell: UITableViewCell {
             return
         }
         
-        if let savedImage = LocalFileManager.shared.getImage(urlToArticle: article.url ?? "", folderName: "news_images") {
+        guard let urlToArticle = article.url else { return }
+        if let savedImage = LocalFileManager.shared.getImage(urlToArticle: urlToArticle, folderName: "news_images") {
             activityIndicator.stopAnimating()
             newsImageView.image = savedImage
         } else {
             viewModel?.fetchNewsImage(for: article)
         }
+        
+        ArticlesDatabaseManager.shared.articleExists(withUrl: article.url ?? " ") { [weak self] exists in
+            self?.isFavourite = exists
+            self?.favouriteButton.setImage(self?.getImage(), for: .normal)
+            
+            if exists {
+                self?.favouriteButton.tintColor = .systemYellow
+            } else {
+                self?.favouriteButton.tintColor = .darkGray
+            }
+        }
     }
 }
 
 extension NewsCell {
+    
+    @objc
+    private func favouriteButtonTapped() {
+        print("favvv <3")
+        
+        guard let article else { return }
+        ArticlesDatabaseManager.shared.saveArticle(
+            article: ArticleDTO(
+                url: article.url ?? "",
+                sourceName: article.source?.name ?? "",
+                title: article.title ?? "",
+                articleDescription: article.description ?? "",
+                urlToImage: article.urlToImage ?? "",
+                publishedAt: article.publishedAt ?? ""
+            )
+        )
+        
+        isFavourite.toggle()
+        favouriteButton.setImage(getImage(), for: .normal)
+        favouriteButton.tintColor = isFavourite ? .systemYellow : .darkGray
+    }
+    
+    private func getImage() -> UIImage {
+        let largeFont = UIFont.systemFont(ofSize: 22, weight: .medium)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        
+        var image: UIImage = UIImage()
+        if isFavourite {
+            image = UIImage(systemName: "star.fill", withConfiguration: configuration)!
+        } else {
+            image = UIImage(systemName: "star", withConfiguration: configuration)!
+        }
+        
+        return image
+    }
+}
 
+extension NewsCell {
+    
     private func configureUI() {
         configureSelf()
-
+        
         configureActivityIndicator()
         configureNewsImageView()
         
@@ -83,48 +139,49 @@ extension NewsCell {
         configureNewsDescriptionLabel()
         configureNewsDateLabel()
         configureNewsAuthorLabel()
+        configureFavouriteButton()
     }
-
+    
     private func configureSelf() {
         selectionStyle = .none
     }
-
+    
     private func configureActivityIndicator() {
-        addSubview(activityIndicator)
+        contentView.addSubview(activityIndicator)
         activityIndicator.snp.makeConstraints { make in
-            make.top.equalTo(self).offset(20)
+            make.top.equalTo(contentView).offset(20)
             make.width.equalTo(UIScreen.main.bounds.width * 0.90)
             make.height.equalTo(150)
-            make.centerX.equalTo(self)
+            make.centerX.equalTo(contentView)
         }
     }
-
+    
     private func configureNewsImageView() {
         newsImageView.contentMode = .scaleAspectFill
         newsImageView.clipsToBounds = true
         newsImageView.layer.cornerRadius = 10
-
-        addSubview(newsImageView)
+        
+        contentView.addSubview(newsImageView)
         newsImageView.snp.makeConstraints { make in
-            make.top.equalTo(self).offset(20)
+            make.top.equalTo(contentView).offset(20)
             make.width.equalTo(UIScreen.main.bounds.width * 0.90)
             make.height.equalTo(150)
-            make.centerX.equalTo(self)
+            make.centerX.equalTo(contentView)
         }
     }
-
+    
     private func configureNewsTitleLabel() {
         newsTitleLabel.textAlignment = .left
         newsTitleLabel.textColor = .black
         newsTitleLabel.lineBreakMode = .byWordWrapping
         newsTitleLabel.numberOfLines = 0
         newsTitleLabel.font = .systemFont(ofSize: 25, weight: .bold)
-
-        addSubview(newsTitleLabel)
+        
+        contentView.addSubview(newsTitleLabel)
         newsTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(newsImageView.snp.bottom).offset(10)
-            make.left.equalTo(self).offset(20)
-            make.right.equalTo(self).offset(-20)
+            make.left.equalTo(contentView).offset(20)
+            make.right.equalTo(contentView).offset(-20)
         }
     }
     
@@ -133,13 +190,13 @@ extension NewsCell {
         newsDescriptionLabel.textColor = .darkGray
         newsDescriptionLabel.lineBreakMode = .byWordWrapping
         newsDescriptionLabel.numberOfLines = 0
-        newsDescriptionLabel.font = .systemFont(ofSize: 18, weight: .medium)
-
-        addSubview(newsDescriptionLabel)
+        newsDescriptionLabel.font = .systemFont(ofSize: 18, weight: .regular)
+        
+        contentView.addSubview(newsDescriptionLabel)
         newsDescriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(newsTitleLabel.snp.bottom).offset(10)
-            make.left.equalTo(self).offset(20)
-            make.right.equalTo(self).offset(-20)
+            make.top.equalTo(newsTitleLabel.snp.bottom).offset(15)
+            make.left.equalTo(contentView).offset(20)
+            make.right.equalTo(contentView).offset(-20)
         }
     }
     
@@ -148,11 +205,11 @@ extension NewsCell {
         newsDateLabel.textColor = .systemGreen
         newsDateLabel.numberOfLines = 1
         newsDateLabel.font = UIFont(name: "SFMono-Regular", size: 15)
-
-        addSubview(newsDateLabel)
+        
+        contentView.addSubview(newsDateLabel)
         newsDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(newsDescriptionLabel.snp.bottom).offset(10)
-            make.left.equalTo(self).offset(20)
+            make.top.equalTo(newsDescriptionLabel.snp.bottom).offset(15)
+            make.left.equalTo(contentView).offset(20)
         }
     }
     
@@ -161,30 +218,26 @@ extension NewsCell {
         newsAuthorLabel.textColor = .gray
         newsAuthorLabel.numberOfLines = 1
         newsAuthorLabel.font = UIFont(name: "SFMono-Regular", size: 15)
-
-        addSubview(newsAuthorLabel)
+        
+        contentView.addSubview(newsAuthorLabel)
         newsAuthorLabel.snp.makeConstraints { make in
-            make.top.equalTo(newsDescriptionLabel.snp.bottom).offset(10)
+            make.top.equalTo(newsDescriptionLabel.snp.bottom).offset(15)
             make.left.equalTo(newsDateLabel.snp.right).offset(10)
-            make.bottom.equalTo(self).offset(-1 * 20)
+            make.bottom.equalTo(contentView).offset(-1 * 20)
         }
     }
     
-    private func getHeight(forImage image: UIImage) -> (CGFloat, CGFloat) {
-        let width = UIScreen.main.bounds.width * 0.90
-        let targetSize = CGSize(width: width, height: width)
-
-        let widthScaleRatio = targetSize.width / image.size.width
-        let heightScaleRatio = targetSize.height / image.size.height
-
-        let scaleFactor = min(widthScaleRatio, heightScaleRatio)
-
-        let scaledImageSize = CGSize(
-            width: image.size.width * scaleFactor,
-            height: image.size.height * scaleFactor
-        )
+    private func configureFavouriteButton() {
+        let largeFont = UIFont.systemFont(ofSize: 22, weight: .medium)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "star", withConfiguration: configuration)!
         
-        return (width, scaledImageSize.height)
+        favouriteButton.addTarget(self, action: #selector(favouriteButtonTapped), for: .touchUpInside)
+        
+        contentView.addSubview(favouriteButton)
+        favouriteButton.snp.makeConstraints { make in
+            make.bottom.equalTo(contentView).offset(-1 * 18)
+            make.right.equalTo(contentView).offset(-1 * 20)
+        }
     }
 }
-

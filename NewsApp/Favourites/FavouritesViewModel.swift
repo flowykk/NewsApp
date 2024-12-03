@@ -8,6 +8,7 @@ protocol FavouritesViewModelDelegate: AnyObject {
     func fetchFavourites()
     
     func backButtonTapped()
+    func clearFavouritesButtonTapped()
 }
 
 final class FavouritesViewModel: FavouritesViewModelDelegate {
@@ -25,7 +26,7 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
         ArticlesDatabaseManager.shared.fetchArticles { result in
             switch result {
             case .success(let articles):
-                print(articles)
+                print(articles.map { $0.title })
             case .failure:
                 return
             }
@@ -34,16 +35,13 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
     
     func backButtonTapped() {
         router?.navigateToNews()
-        
-        ArticlesDatabaseManager.shared.saveArticle(
-            article: ArticleDTO(
-                url: "123",
-                sourceName: "123",
-                title: "123",
-                articleDescription: "123",
-                urlToImage: "123",
-                publishedAt: "123"
-            )
-        )
+    }
+    
+    func clearFavouritesButtonTapped() {
+        clearFavourites()
+    }
+    
+    private func clearFavourites() {
+        ArticlesDatabaseManager.shared.clearArticles()
     }
 }

@@ -10,6 +10,7 @@ protocol ArticlesDatabasePersistable {
     func saveArticle(article: ArticleDTO)
     func removeArticle(article: ArticleDTO)
     func clearArticles()
+    func articleExists(withUrl url: String, completion: @escaping (Bool) -> ()) // Новый метод
 }
 
 final class ArticlesDatabaseManager: ArticlesDatabasePersistable {
@@ -46,7 +47,14 @@ final class ArticlesDatabaseManager: ArticlesDatabasePersistable {
     }
     
     func saveArticle(article: ArticleDTO) {
-        context?.insert(article)
+        articleExists(withUrl: article.url) { [weak self] exists in
+            guard !exists else {
+                print("Article with this URL already exists.")
+                return
+            }
+            
+            self?.context?.insert(article)
+        }
     }
     
     func removeArticle(article: ArticleDTO) {
@@ -58,6 +66,22 @@ final class ArticlesDatabaseManager: ArticlesDatabasePersistable {
             try context?.delete(model: ArticleDTO.self)
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func articleExists(withUrl url: String, completion: @escaping (Bool) -> ()) {
+        let descriptor = FetchDescriptor<ArticleDTO>()
+        
+        do {
+            let data = try context?.fetch(descriptor)
+            guard let data else {
+                completion(false)
+                return
+            }
+            
+            completion(data.contains(where: { $0.url == url }))
+        } catch {
+            completion(false)
         }
     }
 }
