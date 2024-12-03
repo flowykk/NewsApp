@@ -7,6 +7,7 @@ protocol NewsRouterProtocol {
     
     func showArticleInBrowser(urlString: String)
     func navigateToHistory()
+    func navigateToFavourites()
 }
 
 final class NewsRouter: NewsRouterProtocol {
@@ -23,6 +24,11 @@ final class NewsRouter: NewsRouterProtocol {
     
     func navigateToHistory() {
         let vc = HistoryBuilder.build()
+        view?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func navigateToFavourites() {
+        let vc = FavouritesBuilder.build()
         view?.navigationController?.pushViewController(vc, animated: true)
     }
 }

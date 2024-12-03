@@ -11,6 +11,7 @@ protocol NewsViewModelDelegate: AnyObject {
     
     func articleDidTapped(with urlString: String)
     func historyButtonTapped()
+    func favouritesButtonTapped()
 }
 
 final class NewsViewModel: NewsViewModelDelegate {
@@ -52,5 +53,9 @@ final class NewsViewModel: NewsViewModelDelegate {
     
     func historyButtonTapped() {
         router?.navigateToHistory()
+    }
+    
+    func favouritesButtonTapped() {
+        router?.navigateToFavourites()
     }
 }

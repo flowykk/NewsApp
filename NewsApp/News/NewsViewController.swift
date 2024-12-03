@@ -41,7 +41,7 @@ extension NewsViewController {
     
     @objc
     private func favouritesButtonTapped() {
-        print("favs")
+        viewModel?.favouritesButtonTapped()
     }
 }
 
