@@ -28,10 +28,25 @@ final class NewsViewController: UIViewController {
 
 extension NewsViewController {
     
+    @objc
+    private func historyButtonTapped() {
+        print("his")
+    }
+    
+    @objc
+    private func favouritesButtonTapped() {
+        print("favs")
+    }
+}
+
+extension NewsViewController {
+    
     private func configureUI() {
         configureSearchBar()
         
         configureTitleView()
+        configureHistoryButton()
+        configureFavouritesButton()
         configureNavigationBar()
         
         configureTableView()
@@ -79,6 +94,32 @@ extension NewsViewController {
     private func configureTitleView() {
         configureSearchTextLabel()
         configureTotalResultsLabel()
+    }
+    
+    private func configureFavouritesButton() {
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "star", withConfiguration: configuration)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(favouritesButtonTapped))
+        navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    private func configureHistoryButton() {
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "clock", withConfiguration: configuration)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(historyButtonTapped))
+        navigationItem.leftBarButtonItem?.tintColor = .black
     }
     
     private func configureNavigationBar() {
