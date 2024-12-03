@@ -79,6 +79,7 @@ extension NewsViewController {
         searchTextLabel.snp.makeConstraints { make in
             make.top.equalTo(titleView)
             make.centerX.equalTo(titleView)
+            make.width.equalTo(UIScreen.main.bounds.width * 0.6)
         }
     }
     
