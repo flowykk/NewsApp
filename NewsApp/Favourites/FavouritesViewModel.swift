@@ -22,10 +22,28 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
     var didFetchedFavourites: (([Article]) -> Void)?
     
     func fetchFavourites() {
-        favourites = []
+        ArticlesDatabaseManager.shared.fetchArticles { result in
+            switch result {
+            case .success(let articles):
+                print(articles)
+            case .failure:
+                return
+            }
+        }
     }
     
     func backButtonTapped() {
         router?.navigateToNews()
+        
+        ArticlesDatabaseManager.shared.saveArticle(
+            article: ArticleDTO(
+                url: "123",
+                sourceName: "123",
+                title: "123",
+                articleDescription: "123",
+                urlToImage: "123",
+                publishedAt: "123"
+            )
+        )
     }
 }
