@@ -13,7 +13,9 @@ final class NewsViewController: UIViewController {
         didSet{
             viewModel?.didFetchedNews = { [weak self] response in
                 self?.totalResultsLabel.text = "\(response.totalResults ?? 0) Results"
-                self?.tableView.setData(with: response.articles)
+                self?.tableView.setData(with: response.articles.filter { article in
+                    article.title != "[Removed]"
+                } )
             }
             viewModel?.fetchNews(keyword: "food", page: 1, pageSize: 100)
         }
