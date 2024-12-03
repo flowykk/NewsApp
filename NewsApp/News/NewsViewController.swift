@@ -3,11 +3,17 @@ import SnapKit
 
 final class NewsViewController: UIViewController {
     
+    var totalResults = 0
+    
     private let tableView = NewsTableView()
     
     var viewModel: NewsViewModelDelegate? {
-        didSet {
-            tableView.viewModel = viewModel
+        didSet{
+            viewModel?.didFetchedNews = { [weak self] response in
+                self?.totalResults = response.totalResults ?? 0
+                self?.tableView.setData(with: response.articles)
+            }
+            viewModel?.fetchNews(keyword: "Elon Musk", page: 1, pageSize: 10)
         }
     }
     
@@ -46,7 +52,8 @@ extension NewsViewController {
 extension NewsViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchText = searchBar.text, !searchText.isEmpty else { return }
-        tableView.viewModel?.fetchNews(keyword: searchText, page: 1, pageSize: 10)
+        viewModel?.fetchNews(keyword: searchText, page: 1, pageSize: 10)
+        
         searchBar.resignFirstResponder()
     }
 }
