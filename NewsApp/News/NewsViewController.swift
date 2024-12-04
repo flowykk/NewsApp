@@ -8,16 +8,30 @@ final class NewsViewController: UIViewController {
     private let totalResultsLabel = UILabel()
     
     private let tableView = NewsTableView()
+    private let emptyLabel = EmptyLabel(message: "Start searching News here! 🔎")
+
     
     var viewModel: NewsViewModelDelegate? {
         didSet{
             viewModel?.didFetchedNews = { [weak self] response in
                 self?.totalResultsLabel.text = "\(response.totalResults ?? 0) Results"
-                self?.tableView.setData(with: response.articles.filter { article in
+                
+                let filteredArticles = response.articles.filter { article in
                     article.title != "[Removed]"
-                } )
+                }
+
+                self?.tableView.setData(with: filteredArticles)
+                
+                if filteredArticles.isEmpty {
+                    self?.tableView.isHidden = true
+                    
+                    self?.emptyLabel.setMessage(message: "No results for such search! 🥀")
+                    self?.emptyLabel.isHidden = false
+                } else {
+                    self?.tableView.isHidden = false
+                    self?.emptyLabel.isHidden = true
+                }
             }
-            viewModel?.fetchNews(keyword: "food", page: 1, pageSize: 100)
         }
     }
     
@@ -26,6 +40,12 @@ final class NewsViewController: UIViewController {
         navigationController?.delegate = self
         
         configureUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -58,6 +78,7 @@ extension NewsViewController {
         configureNavigationBar()
         
         configureTableView()
+        configureEmptyLabel()
     }
     
     private func configureSearchBar() {
@@ -140,6 +161,13 @@ extension NewsViewController {
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func configureEmptyLabel() {
+        view.addSubview(emptyLabel)
+        emptyLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
