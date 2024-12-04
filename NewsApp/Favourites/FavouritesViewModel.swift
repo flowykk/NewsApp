@@ -23,10 +23,10 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
     var didFetchedFavourites: (([Article]) -> Void)?
     
     func fetchFavourites() {
-        ArticlesDatabaseManager.shared.fetchArticles { result in
+        ArticlesDatabaseManager.shared.fetchArticles { [weak self] result in
             switch result {
             case .success(let articles):
-                print(articles.map { $0.title })
+                self?.favourites = articles.map { $0.toArticle() }
             case .failure:
                 return
             }

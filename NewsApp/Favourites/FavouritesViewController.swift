@@ -7,10 +7,13 @@ final class FavouritesViewController: UIViewController {
     private let FavouriteArticlesLabel = UILabel()
     private let FavouriteArticlesItemsLabel = UILabel()
     
+    private let tableView = NewsTableView()
+    
     var viewModel: FavouritesViewModel? {
         didSet {
-            viewModel?.didFetchedFavourites = { favourites in // TODO: [weak self]
-                print(favourites)
+            viewModel?.didFetchedFavourites = { [weak self] favourites in
+                print(favourites.count, favourites.map { $0.title })
+                self?.tableView.setData(with: favourites)
             }
             viewModel?.fetchFavourites()
         }
@@ -33,7 +36,6 @@ extension FavouritesViewController {
     
     @objc
     private func clearHistoryButtonTapped() {
-        print("clear")
         viewModel?.clearFavouritesButtonTapped()
         viewModel?.fetchFavourites()
     }
@@ -46,6 +48,8 @@ extension FavouritesViewController {
         configureClearHistoryButton()
         configureBackButton()
         configureNavigationBar()
+        
+        configureTableView()
     }
     
     private func configureNavigationBar() {
@@ -113,5 +117,12 @@ extension FavouritesViewController {
     private func configureTitleView() {
         configureSearchHistoryLabel()
         configureSearchHistoryItemsLabel()
+    }
+    
+    private func configureTableView() {
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 }

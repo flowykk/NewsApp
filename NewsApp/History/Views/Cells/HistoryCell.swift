@@ -20,7 +20,6 @@ final class HistoryCell: UITableViewCell {
     func set(with historyItem: SearchHistoryItem) {
         searchTitleLabel.text = historyItem.title
         searchResultsLabel.text = historyItem.totalResults
-        print(historyItem.searchDate)
         searchTimeLabel.text = historyItem.searchDate
     }
 }

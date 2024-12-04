@@ -93,19 +93,23 @@ extension NewsCell {
     
     @objc
     private func favouriteButtonTapped() {
-        print("favvv <3")
-        
         guard let article else { return }
-        ArticlesDatabaseManager.shared.saveArticle(
-            article: ArticleDTO(
-                url: article.url ?? "",
-                sourceName: article.source?.name ?? "",
-                title: article.title ?? "",
-                articleDescription: article.description ?? "",
-                urlToImage: article.urlToImage ?? "",
-                publishedAt: article.publishedAt ?? ""
-            )
+        let articleDTO = ArticleDTO(
+            url: article.url ?? "",
+            sourceName: article.source?.name ?? "",
+            title: article.title ?? "",
+            articleDescription: article.description ?? "",
+            urlToImage: article.urlToImage ?? "",
+            publishedAt: article.publishedAt ?? ""
         )
+        
+        if isFavourite {
+            print("removing")
+            ArticlesDatabaseManager.shared.removeArticle(article: articleDTO)
+        } else {
+            print("adding")
+            ArticlesDatabaseManager.shared.saveArticle(article: articleDTO)
+        }
         
         isFavourite.toggle()
         favouriteButton.setImage(getImage(), for: .normal)

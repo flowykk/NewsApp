@@ -2,6 +2,8 @@ import SwiftData
 
 @Model
 final class ArticleDTO {
+    
+    @Attribute(.unique)
     var url: String
     var sourceName: String
     var title: String
@@ -23,5 +25,16 @@ final class ArticleDTO {
         self.articleDescription = articleDescription
         self.urlToImage = urlToImage
         self.publishedAt = publishedAt
+    }
+    
+    func toArticle() -> Article {
+        Article(
+            source: sourceName,
+            title: title,
+            description: articleDescription,
+            url: url,
+            urlToImage: urlToImage,
+            publishedAt: publishedAt
+        )
     }
 }
