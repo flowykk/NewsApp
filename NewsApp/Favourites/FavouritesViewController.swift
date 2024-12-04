@@ -8,12 +8,24 @@ final class FavouritesViewController: UIViewController {
     private let favouriteArticlesItemsLabel = UILabel()
     
     private let tableView = NewsTableView()
+    private let emptyLabel = EmptyLabel(
+        message: "You have no favorite articles yet! 😢\nSave some News to your favorites! ⭐️"
+    )
     
     var viewModel: FavouritesViewModel? {
         didSet {
             viewModel?.didFetchedFavourites = { [weak self] favourites in
-                self?.tableView.setData(with: favourites)
                 self?.favouriteArticlesItemsLabel.text = "\(favourites.count) Items"
+                
+                self?.tableView.setData(with: favourites)
+                
+                if favourites.isEmpty {
+                    self?.tableView.isHidden = true
+                    self?.emptyLabel.isHidden = false
+                } else {
+                    self?.tableView.isHidden = false
+                    self?.emptyLabel.isHidden = true
+                }
             }
             viewModel?.fetchFavourites()
         }
@@ -50,6 +62,7 @@ extension FavouritesViewController {
         configureNavigationBar()
         
         configureTableView()
+        configureEmptyLabel()
     }
     
     private func configureNavigationBar() {
@@ -121,6 +134,13 @@ extension FavouritesViewController {
     private func configureTableView() {
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func configureEmptyLabel() {
+        view.addSubview(emptyLabel)
+        emptyLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
