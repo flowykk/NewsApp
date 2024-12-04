@@ -57,12 +57,17 @@ final class NewsViewController: UIViewController {
         configureSearchBar()
     }
     
-    func sortTable(sortBy: String?) {
+    func filterTable(sortBy: String? = nil, language: String? = nil) {
         isFiltering = true
         tableView.clearData()
         viewModel?.resetCurrentPage()
         guard let searchText = searchText else { return }
-        viewModel?.fetchNews(keyword: searchText, sortBy: sortBy, needToSave: false)
+        viewModel?.fetchNews(
+            keyword: searchText,
+            sortBy: sortBy == FilterSettings.resetSettings.rawValue ? nil : sortBy,
+            language: language == LanguageSettings.resetSettings.rawValue ? nil : language?.getLanguageCode(),
+            needToSave: false
+        )
     }
     
     func resetSort() {
@@ -71,6 +76,26 @@ final class NewsViewController: UIViewController {
         viewModel?.resetCurrentPage()
         guard let searchText = searchText else { return }
         viewModel?.fetchNews(keyword: searchText, needToSave: false)
+    }
+    
+    func prepareAlertActions(withVariation variation: FilterVariations) -> [UIAlertAction] {
+        var actions = [UIAlertAction]()
+        let sortParameters = variation == FilterVariations.language ?
+            LanguageSettings.allCases.map { $0.rawValue } :
+            FilterSettings.allCases.map { $0.rawValue }
+        
+        for parameter in sortParameters {
+            let action = UIAlertAction(title: parameter, style: .default) { [unowned self] _ in
+                variation == FilterVariations.language ?
+                    self.filterTable(language: parameter) :
+                    self.filterTable(sortBy: parameter)
+            }
+            actions.append(action)
+        }
+        
+        actions.append(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        return actions
     }
 }
 
@@ -87,42 +112,41 @@ extension NewsViewController {
     }
     
     @objc
-    private func languageButtonTapped() {
-        print("changing language")
-    }
-    
-    @objc
-    func showSortOptions() {
-        
+    private func showLanguageFilterOptions() {
         if tableView.articles.isEmpty {
             viewModel?.filterButtonTappedWithNoData()
         }
         
-        let alertController = UIAlertController(title: "Sort Articles", message: "Choose sorting parameter", preferredStyle: .actionSheet)
-        
-        let sortByPublishDate = UIAlertAction(title: "Publish Date", style: .default) { [unowned self] _ in
-            print("date")
-            self.sortTable(sortBy: "publishedAt")
-        }
-        let sortByRelevancy = UIAlertAction(title: "Relevancy", style: .default) { [unowned self] _ in
-            print("relevancy")
-            self.sortTable(sortBy: "relevancy")
-        }
-        let sortByPopularity = UIAlertAction(title: "Popularity", style: .default) { [unowned self] _ in
-            print("popularity")
-            self.sortTable(sortBy: "popularity")
-        }
-        let resetSort = UIAlertAction(title: "Reset sorting settings", style: .default) { [unowned self] _ in
-            self.resetSort()
+        let alertController = UIAlertController(
+            title: "Filter articles by language",
+            message: "Choose language",
+            preferredStyle: .actionSheet
+        )
+
+        let actions = prepareAlertActions(withVariation: .language)
+        for action in actions {
+            alertController.addAction(action)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc
+    private func showSortingFilterOptions() {
+        if tableView.articles.isEmpty {
+            viewModel?.filterButtonTappedWithNoData()
+        }
         
-        alertController.addAction(sortByPublishDate)
-        alertController.addAction(sortByRelevancy)
-        alertController.addAction(sortByPopularity)
-        alertController.addAction(resetSort)
-        alertController.addAction(cancelAction)
+        let alertController = UIAlertController(
+            title: "Sort articles",
+            message: "Choose sorting parameter",
+            preferredStyle: .actionSheet
+        )
+
+        let actions = prepareAlertActions(withVariation: .sorting)
+        for action in actions {
+            alertController.addAction(action)
+        }
         
         self.present(alertController, animated: true, completion: nil)
     }
@@ -210,7 +234,7 @@ extension NewsViewController {
             image: sortImage,
             style: .plain,
             target: self,
-            action: #selector(languageButtonTapped)
+            action: #selector(showLanguageFilterOptions)
         )
         
         languageButton.tintColor = Colors.primaryTextColor
@@ -247,7 +271,7 @@ extension NewsViewController {
             image: image,
             style: .plain,
             target: self,
-            action: #selector(showSortOptions)
+            action: #selector(showSortingFilterOptions)
         )
         
         sortingButton.tintColor = Colors.primaryTextColor
