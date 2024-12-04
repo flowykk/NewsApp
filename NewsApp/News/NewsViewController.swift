@@ -61,6 +61,30 @@ extension NewsViewController {
     private func favouritesButtonTapped() {
         viewModel?.favouritesButtonTapped()
     }
+    
+    @objc
+    func showSortOptions() {
+        let alertController = UIAlertController(title: "Sort Articles", message: "Choose sorting parameter", preferredStyle: .actionSheet)
+        
+        let sortByPublishDate = UIAlertAction(title: "Publish Date", style: .default) { _ in
+            print("publish date")
+        }
+        let sortByRelevancy = UIAlertAction(title: "Relevancy", style: .default) { _ in
+            print("relevancy")
+        }
+        let sortByPopularity = UIAlertAction(title: "Popularity", style: .default) { _ in
+            print("popularity")
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertController.addAction(sortByPublishDate)
+        alertController.addAction(sortByRelevancy)
+        alertController.addAction(sortByPopularity)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension NewsViewController {
@@ -129,7 +153,7 @@ extension NewsViewController {
         
         let sortLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
         let sortConfiguration = UIImage.SymbolConfiguration(font: sortLargeFont)
-        let sortImage = UIImage(systemName: "calendar", withConfiguration: sortConfiguration)
+        let sortImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: sortConfiguration)
         
         let favsButton = UIBarButtonItem(
             image: favsImage,
@@ -161,26 +185,6 @@ extension NewsViewController {
             target: self,
             action: #selector(historyButtonTapped))
         navigationItem.leftBarButtonItem?.tintColor = Colors.primaryTextColor
-    }
-    
-    @objc
-    func showSortOptions() {
-        let alertController = UIAlertController(title: "Sort Articles", message: "Choose sorting order", preferredStyle: .actionSheet)
-        
-        let sortByNewestAction = UIAlertAction(title: "Newest First", style: .default) { _ in
-            print(1)
-        }
-        alertController.addAction(sortByNewestAction)
-        
-        let sortByOldestAction = UIAlertAction(title: "Oldest First", style: .default) { _ in
-            print(2)
-        }
-        alertController.addAction(sortByOldestAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
     }
     
     private func configureNavigationBar() {
