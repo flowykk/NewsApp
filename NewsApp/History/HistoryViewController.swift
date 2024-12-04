@@ -55,7 +55,6 @@ extension HistoryViewController {
     @objc
     private func clearHistoryButtonTapped() {
         viewModel?.clearHistoryButtonTapped()
-        viewModel?.fetchHistory()
     }
 }
 

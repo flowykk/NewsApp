@@ -10,6 +10,8 @@ protocol HistoryViewModelDelegate: AnyObject {
     
     func clearHistoryButtonTapped()
     func backButtonTapped()
+    
+    func clearHistory()
 }
 
 final class HistoryViewModel: HistoryViewModelDelegate {
@@ -35,10 +37,15 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     }
     
     func clearHistoryButtonTapped() {
-        clearHistory()
+        if history.isEmpty {
+            router?.presentEmptyHistoryAlert()
+        } else {
+            router?.presentClearHistoryAlert()
+        }
     }
     
-    private func clearHistory() {
+    func clearHistory() {
         HistoryDataManager.shared.clearSearches()
+        fetchHistory()
     }
 }
