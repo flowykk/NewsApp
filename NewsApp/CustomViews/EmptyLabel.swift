@@ -22,10 +22,10 @@ extension EmptyLabel {
     
     private func configureUI() {
         textAlignment = .center
-        backgroundColor = .systemBackground
-        textColor = .gray
+        backgroundColor = Colors.backgroundColor
+        textColor = Colors.secondaryTextColor
         numberOfLines = 0
-        font = .systemFont(ofSize: 18, weight: .semibold)
+        font = .systemFont(ofSize: 18, weight: .medium)
         translatesAutoresizingMaskIntoConstraints = false
     }
 }

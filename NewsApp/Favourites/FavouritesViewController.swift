@@ -33,7 +33,7 @@ final class FavouritesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.backgroundColor
         
         configureUI()
     }
@@ -79,7 +79,7 @@ extension FavouritesViewController {
             style: .plain,
             target: self,
             action: #selector(clearHistoryButtonTapped))
-        navigationItem.rightBarButtonItem?.tintColor = .systemPink
+        navigationItem.rightBarButtonItem?.tintColor = Colors.trashColor
     }
     
     private func configureBackButton() {
@@ -93,14 +93,14 @@ extension FavouritesViewController {
             target: self,
             action: #selector(backButtonTapped)
         )
-        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationItem.leftBarButtonItem?.tintColor = Colors.primaryTextColor
     }
     
     private func configureSearchHistoryLabel() {
         favouriteArticlesLabel.textAlignment = .center
         favouriteArticlesLabel.text = "Favourite Articles"
         favouriteArticlesLabel.sizeToFit()
-        favouriteArticlesLabel.textColor = .black
+        favouriteArticlesLabel.textColor = Colors.primaryTextColor
         favouriteArticlesLabel.font = .systemFont(ofSize: 17, weight: .bold)
         
         titleView.addSubview(favouriteArticlesLabel)
@@ -114,7 +114,7 @@ extension FavouritesViewController {
     private func configureSearchHistoryItemsLabel() {
         favouriteArticlesItemsLabel.textAlignment = .center
         favouriteArticlesItemsLabel.sizeToFit()
-        favouriteArticlesItemsLabel.textColor = .gray
+        favouriteArticlesItemsLabel.textColor = Colors.tertiaryTextColor
         favouriteArticlesItemsLabel.font = .systemFont(ofSize: 14, weight: .medium)
              
         titleView.addSubview(favouriteArticlesItemsLabel)

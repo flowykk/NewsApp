@@ -91,7 +91,7 @@ extension NewsViewController {
         searchTextLabel.textAlignment = .center
         searchTextLabel.text = "News Feed"
         searchTextLabel.sizeToFit()
-        searchTextLabel.textColor = .black
+        searchTextLabel.textColor = Colors.primaryTextColor
         searchTextLabel.font = .systemFont(ofSize: 17, weight: .bold)
         
         titleView.addSubview(searchTextLabel)
@@ -106,7 +106,7 @@ extension NewsViewController {
         totalResultsLabel.textAlignment = .center
         totalResultsLabel.text = "0 Results"
         totalResultsLabel.sizeToFit()
-        totalResultsLabel.textColor = .gray
+        totalResultsLabel.textColor = Colors.tertiaryTextColor
         totalResultsLabel.font = .systemFont(ofSize: 14, weight: .medium)
              
         titleView.addSubview(totalResultsLabel)
@@ -144,8 +144,8 @@ extension NewsViewController {
             action: #selector(showSortOptions)
         )
         
-        favsButton.tintColor = .black
-        sortButton.tintColor = .black
+        favsButton.tintColor = Colors.primaryTextColor
+        sortButton.tintColor = Colors.primaryTextColor
         
         navigationItem.rightBarButtonItems = [favsButton, sortButton]
     }
@@ -160,7 +160,7 @@ extension NewsViewController {
             style: .plain,
             target: self,
             action: #selector(historyButtonTapped))
-        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationItem.leftBarButtonItem?.tintColor = Colors.primaryTextColor
     }
     
     @objc

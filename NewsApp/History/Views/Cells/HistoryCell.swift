@@ -40,7 +40,7 @@ extension HistoryCell {
     
     private func configureSearchTitleLabel() {
         searchTitleLabel.textAlignment = .left
-        searchTitleLabel.textColor = .black
+        searchTitleLabel.textColor = Colors.primaryTextColor
         searchTitleLabel.numberOfLines = 1
         searchTitleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
 
@@ -54,7 +54,7 @@ extension HistoryCell {
     
     private func configureSearchResultsLabel() {
         searchResultsLabel.textAlignment = .right
-        searchResultsLabel.textColor = .gray
+        searchResultsLabel.textColor = Colors.secondaryTextColor
         searchResultsLabel.numberOfLines = 1
         searchResultsLabel.font = .systemFont(ofSize: 15, weight: .medium)
 
@@ -67,7 +67,7 @@ extension HistoryCell {
     
     private func configureSearchDateLabel() {
         searchTimeLabel.textAlignment = .left
-        searchTimeLabel.textColor = .gray
+        searchTimeLabel.textColor = Colors.secondaryTextColor
         searchTimeLabel.numberOfLines = 1
         searchTimeLabel.font = UIFont(name: "SFMono-Regular", size: 13)
 

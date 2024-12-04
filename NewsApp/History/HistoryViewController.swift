@@ -34,7 +34,7 @@ final class HistoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.delegate = self
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.backgroundColor
         
         configureUI()
     }
@@ -85,7 +85,7 @@ extension HistoryViewController {
             style: .plain,
             target: self,
             action: #selector(clearHistoryButtonTapped))
-        navigationItem.leftBarButtonItem?.tintColor = .systemPink
+        navigationItem.leftBarButtonItem?.tintColor = Colors.trashColor
     }
     
     private func configureBackButton() {
@@ -99,14 +99,14 @@ extension HistoryViewController {
             target: self,
             action: #selector(backButtonTapped)
         )
-        navigationItem.rightBarButtonItem?.tintColor = .black
+        navigationItem.rightBarButtonItem?.tintColor = Colors.primaryTextColor
     }
     
     private func configureSearchHistoryLabel() {
         searchHistoryLabel.textAlignment = .center
         searchHistoryLabel.text = "Search History"
         searchHistoryLabel.sizeToFit()
-        searchHistoryLabel.textColor = .black
+        searchHistoryLabel.textColor = Colors.primaryTextColor
         searchHistoryLabel.font = .systemFont(ofSize: 17, weight: .bold)
         
         titleView.addSubview(searchHistoryLabel)
@@ -120,7 +120,7 @@ extension HistoryViewController {
     private func configureSearchHistoryItemsLabel() {
         searchHistoryItemsLabel.textAlignment = .center
         searchHistoryItemsLabel.sizeToFit()
-        searchHistoryItemsLabel.textColor = .gray
+        searchHistoryItemsLabel.textColor = Colors.tertiaryTextColor
         searchHistoryItemsLabel.font = .systemFont(ofSize: 14, weight: .medium)
              
         titleView.addSubview(searchHistoryItemsLabel)

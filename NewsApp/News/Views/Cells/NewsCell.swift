@@ -80,11 +80,7 @@ final class NewsCell: UITableViewCell {
             self?.isFavourite = exists
             self?.favouriteButton.setImage(self?.getImage(), for: .normal)
             
-            if exists {
-                self?.favouriteButton.tintColor = .systemYellow
-            } else {
-                self?.favouriteButton.tintColor = .darkGray
-            }
+            self?.favouriteButton.tintColor = exists ? Colors.starColor : Colors.tertiaryTextColor
         }
     }
 }
@@ -113,7 +109,7 @@ extension NewsCell {
         
         isFavourite.toggle()
         favouriteButton.setImage(getImage(), for: .normal)
-        favouriteButton.tintColor = isFavourite ? .systemYellow : .darkGray
+        favouriteButton.tintColor = isFavourite ? Colors.starColor : Colors.tertiaryTextColor
     }
     
     private func getImage() -> UIImage {
@@ -176,7 +172,7 @@ extension NewsCell {
     
     private func configureNewsTitleLabel() {
         newsTitleLabel.textAlignment = .left
-        newsTitleLabel.textColor = .black
+        newsTitleLabel.textColor = Colors.primaryTextColor
         newsTitleLabel.lineBreakMode = .byWordWrapping
         newsTitleLabel.numberOfLines = 0
         newsTitleLabel.font = .systemFont(ofSize: 25, weight: .bold)
@@ -191,7 +187,7 @@ extension NewsCell {
     
     private func configureNewsDescriptionLabel() {
         newsDescriptionLabel.textAlignment = .justified
-        newsDescriptionLabel.textColor = .darkGray
+        newsDescriptionLabel.textColor = Colors.secondaryTextColor
         newsDescriptionLabel.lineBreakMode = .byWordWrapping
         newsDescriptionLabel.numberOfLines = 0
         newsDescriptionLabel.font = .systemFont(ofSize: 18, weight: .regular)
@@ -206,7 +202,7 @@ extension NewsCell {
     
     private func configureNewsDateLabel() {
         newsDateLabel.textAlignment = .left
-        newsDateLabel.textColor = .systemGreen
+        newsDateLabel.textColor = Colors.additionalTextColor
         newsDateLabel.numberOfLines = 1
         newsDateLabel.font = UIFont(name: "SFMono-Regular", size: 15)
         
@@ -219,7 +215,7 @@ extension NewsCell {
     
     private func configureNewsAuthorLabel() {
         newsAuthorLabel.textAlignment = .right
-        newsAuthorLabel.textColor = .gray
+        newsAuthorLabel.textColor = Colors.tertiaryTextColor
         newsAuthorLabel.numberOfLines = 1
         newsAuthorLabel.font = UIFont(name: "SFMono-Regular", size: 15)
         
@@ -232,10 +228,6 @@ extension NewsCell {
     }
     
     private func configureFavouriteButton() {
-        let largeFont = UIFont.systemFont(ofSize: 22, weight: .medium)
-        let configuration = UIImage.SymbolConfiguration(font: largeFont)
-        let image = UIImage(systemName: "star", withConfiguration: configuration)!
-        
         favouriteButton.addTarget(self, action: #selector(favouriteButtonTapped), for: .touchUpInside)
         
         contentView.addSubview(favouriteButton)
