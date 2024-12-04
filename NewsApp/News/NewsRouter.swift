@@ -8,6 +8,8 @@ protocol NewsRouterProtocol {
     func showArticleInBrowser(urlString: String)
     func navigateToHistory()
     func navigateToFavourites()
+    
+    func presentNoDataAlert()
 }
 
 final class NewsRouter: NewsRouterProtocol {
@@ -30,5 +32,13 @@ final class NewsRouter: NewsRouterProtocol {
     func navigateToFavourites() {
         let vc = FavouritesBuilder.build()
         view?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func presentNoDataAlert() {
+        AlertHelper.shared.showDefaultAlert(
+            from: view,
+            withTitle: "Nothing to filter",
+            message: "There is no data now!"
+        )
     }
 }

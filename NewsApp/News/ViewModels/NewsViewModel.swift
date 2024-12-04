@@ -7,18 +7,19 @@ protocol NewsViewModelDelegate: AnyObject {
     var response: NewsResponse { get set }
     var didFetchedNews: ((NewsResponse) -> Void)? { get set }
     
-    func fetchNews(keyword: String, needToSave: Bool)
+    func fetchNews(keyword: String, sortBy: String?, language: String?, needToSave: Bool)
     func saveToHistory(title: String, totalResults: String, searchDate: String)
     
     func articleDidTapped(with urlString: String)
+    func filterButtonTappedWithNoData()
     func historyButtonTapped()
     func favouritesButtonTapped()
 }
 
 extension NewsViewModelDelegate {
     
-    func fetchNews(keyword: String, needToSave: Bool = false) {
-        return fetchNews(keyword: keyword, needToSave: needToSave)
+    func fetchNews(keyword: String, sortBy: String? = nil, language: String? = nil, needToSave: Bool = false) {
+        return fetchNews(keyword: keyword, sortBy: sortBy, language: language, needToSave: needToSave)
     }
 }
 
@@ -38,14 +39,16 @@ final class NewsViewModel: NewsViewModelDelegate {
     }
     var didFetchedNews: ((NewsResponse) -> Void)?
     
-    func fetchNews(keyword: String, needToSave: Bool = false) {
+    func fetchNews(keyword: String, sortBy: String? = nil, language: String? = nil, needToSave: Bool = false) {
         guard !isLoading else { return }
         isLoading = true
         
         NetworkManager.shared.fetchNews(
-            about: keyword,
+            keyword: keyword,
             page: currentPage,
-            pageSize: pageSize
+            pageSize: pageSize,
+            sortBy: sortBy,
+            language: language
         ) { (result: Result<NewsResponse, Error>) in
             switch result {
             case .success(let response):
@@ -76,6 +79,10 @@ final class NewsViewModel: NewsViewModelDelegate {
     
     func articleDidTapped(with urlString: String) {
         router?.showArticleInBrowser(urlString: urlString)
+    }
+    
+    func filterButtonTappedWithNoData() {
+        router?.presentNoDataAlert()
     }
     
     func historyButtonTapped() {

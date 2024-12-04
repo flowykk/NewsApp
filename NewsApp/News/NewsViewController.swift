@@ -3,6 +3,9 @@ import SnapKit
 
 final class NewsViewController: UIViewController {
     
+    private var searchText: String? = nil
+    private var isFiltering: Bool = false
+    
     private let titleView = UIView()
     private let searchTextLabel = UILabel()
     private let totalResultsLabel = UILabel()
@@ -48,6 +51,21 @@ final class NewsViewController: UIViewController {
         configureSearchBar()
     }
     
+    func sortTable(bySortBy sortBy: String?) {
+        isFiltering = true
+        self.tableView.clearData()
+        guard let searchText = self.searchText else { return }
+        self.viewModel?.fetchNews(keyword: searchText, sortBy: sortBy, needToSave: true)
+    }
+    
+    func resetSort() {
+        isFiltering = false
+        
+        
+        self.tableView.clearData()
+        guard let searchText = self.searchText else { return }
+        self.viewModel?.fetchNews(keyword: searchText, needToSave: false)
+    }
 }
 
 extension NewsViewController {
@@ -64,16 +82,24 @@ extension NewsViewController {
     
     @objc
     func showSortOptions() {
+        
+        if tableView.articles.isEmpty {
+            viewModel?.filterButtonTappedWithNoData()
+        }
+        
         let alertController = UIAlertController(title: "Sort Articles", message: "Choose sorting parameter", preferredStyle: .actionSheet)
         
-        let sortByPublishDate = UIAlertAction(title: "Publish Date", style: .default) { _ in
-            print("publish date")
+        let sortByPublishDate = UIAlertAction(title: "Publish Date", style: .default) { [unowned self] _ in
+            self.sortTable(bySortBy: "publishedAt")
         }
-        let sortByRelevancy = UIAlertAction(title: "Relevancy", style: .default) { _ in
-            print("relevancy")
+        let sortByRelevancy = UIAlertAction(title: "Relevancy", style: .default) { [unowned self] _ in
+            self.sortTable(bySortBy: "relevancy")
         }
-        let sortByPopularity = UIAlertAction(title: "Popularity", style: .default) { _ in
-            print("popularity")
+        let sortByPopularity = UIAlertAction(title: "Popularity", style: .default) { [unowned self] _ in
+            self.sortTable(bySortBy: "popularity")
+        }
+        let resetSort = UIAlertAction(title: "Reset sort settings", style: .default) { [unowned self] _ in
+            self.resetSort()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -81,6 +107,7 @@ extension NewsViewController {
         alertController.addAction(sortByPublishDate)
         alertController.addAction(sortByRelevancy)
         alertController.addAction(sortByPopularity)
+        alertController.addAction(resetSort)
         alertController.addAction(cancelAction)
         
         self.present(alertController, animated: true, completion: nil)
@@ -168,10 +195,14 @@ extension NewsViewController {
             action: #selector(showSortOptions)
         )
         
-        favsButton.tintColor = Colors.primaryTextColor
-        sortButton.tintColor = Colors.primaryTextColor
+        sortingButton.tintColor = Colors.primaryTextColor
+    }
+    
+    private func configureRightBarItems() {
+        configureFavouriteButton()
+        configureSortingButton()
         
-        navigationItem.rightBarButtonItems = [favsButton, sortButton]
+        navigationItem.rightBarButtonItems = [favouriteButton, sortingButton]
     }
     
     private func configureHistoryButton() {
@@ -215,7 +246,7 @@ extension NewsViewController: NewsTableViewDelegate {
     }
     
     func didScrolledToBottom() {
-        guard let searchText = searchTextLabel.text else { return }
+        guard let searchText = self.searchText else { return }
         viewModel?.fetchNews(keyword: searchText)
     }
 }
@@ -229,7 +260,10 @@ extension NewsViewController: UISearchBarDelegate {
         }
         
         searchTextLabel.text = "News about \(searchText)"
+        self.searchText = searchText
+        
         tableView.clearData()
+        print(isFiltering)
         viewModel?.fetchNews(keyword: searchText, needToSave: true)
         
         searchBar.resignFirstResponder()

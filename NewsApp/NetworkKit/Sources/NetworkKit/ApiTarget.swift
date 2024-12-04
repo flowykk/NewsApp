@@ -16,7 +16,7 @@ public enum HttpMethod: String {
 }
 
 public enum API {
-    case getNews(keyword: String, page: Int, pageSize: Int)
+    case getNews(keyword: String, page: Int, pageSize: Int, sortBy: String? = nil, language: String? = nil)
     case getNewsImage(imageURL: String)
 }
 
@@ -51,9 +51,15 @@ extension API: TargetType {
 
     public var task: Task {
         switch self {
-        case .getNews(let keyword, let page, let pageSize):
+        case .getNews(let keyword, let page, let pageSize, let sortBy, let language):
             return .requestParameters(
-                parameters: ["q": keyword, "page": page, "pageSize": pageSize],
+                parameters: [
+                    "q": keyword,
+                    "page": page,
+                    "pageSize": pageSize,
+                    "sortBy": sortBy ?? "",
+                    "language": language ?? ""
+                ],
                 encoding: URLEncoding.queryString
             )
         default:
