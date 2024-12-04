@@ -8,12 +8,24 @@ final class HistoryViewController: UIViewController {
     private let searchHistoryItemsLabel = UILabel()
     
     private let tableView = HistoryTableView()
+    private let emptyLabel = EmptyLabel(
+        message: "You have no searches yet! 😢\nLet's Search for news together! 🤭"
+    )
     
     var viewModel: HistoryViewModelDelegate? {
         didSet {
             viewModel?.didFetchedHistory = { [weak self] history in
-                self?.tableView.setData(with: history)
                 self?.searchHistoryItemsLabel.text = "\(history.count) Items"
+                
+                self?.tableView.setData(with: history)
+                
+                if history.isEmpty {
+                    self?.tableView.isHidden = true
+                    self?.emptyLabel.isHidden = false
+                } else {
+                    self?.tableView.isHidden = false
+                    self?.emptyLabel.isHidden = true
+                }
             }
             viewModel?.fetchHistory()
         }
@@ -56,6 +68,7 @@ extension HistoryViewController {
         configureNavigationBar()
         
         configureTableView()
+        configureEmptyLabel()
     }
     
     private func configureNavigationBar() {
@@ -129,6 +142,13 @@ extension HistoryViewController {
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func configureEmptyLabel() {
+        view.addSubview(emptyLabel)
+        emptyLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }

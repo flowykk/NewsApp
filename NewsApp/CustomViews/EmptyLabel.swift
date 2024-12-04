@@ -25,7 +25,7 @@ extension EmptyLabel {
         backgroundColor = .systemBackground
         textColor = .gray
         numberOfLines = 0
-        font = .systemFont(ofSize: 20, weight: .semibold)
+        font = .systemFont(ofSize: 18, weight: .semibold)
         translatesAutoresizingMaskIntoConstraints = false
     }
 }
