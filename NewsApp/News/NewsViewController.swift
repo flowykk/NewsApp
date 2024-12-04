@@ -13,6 +13,9 @@ final class NewsViewController: UIViewController {
     private let tableView = NewsTableView()
     private let emptyLabel = EmptyLabel(message: "Start searching News here! 🔎")
     
+    private var historyButton = UIBarButtonItem()
+    private var languageButton = UIBarButtonItem()
+    
     private var favouriteButton = UIBarButtonItem()
     private var sortingButton = UIBarButtonItem()
 
@@ -54,20 +57,20 @@ final class NewsViewController: UIViewController {
         configureSearchBar()
     }
     
-    func sortTable(bySortBy sortBy: String?) {
+    func sortTable(sortBy: String?) {
         isFiltering = true
-        self.tableView.clearData()
-        guard let searchText = self.searchText else { return }
-        self.viewModel?.fetchNews(keyword: searchText, sortBy: sortBy, needToSave: true)
+        tableView.clearData()
+        viewModel?.resetCurrentPage()
+        guard let searchText = searchText else { return }
+        viewModel?.fetchNews(keyword: searchText, sortBy: sortBy, needToSave: false)
     }
     
     func resetSort() {
         isFiltering = false
-        
-        
-        self.tableView.clearData()
-        guard let searchText = self.searchText else { return }
-        self.viewModel?.fetchNews(keyword: searchText, needToSave: false)
+        tableView.clearData()
+        viewModel?.resetCurrentPage()
+        guard let searchText = searchText else { return }
+        viewModel?.fetchNews(keyword: searchText, needToSave: false)
     }
 }
 
@@ -84,6 +87,11 @@ extension NewsViewController {
     }
     
     @objc
+    private func languageButtonTapped() {
+        print("changing language")
+    }
+    
+    @objc
     func showSortOptions() {
         
         if tableView.articles.isEmpty {
@@ -93,15 +101,18 @@ extension NewsViewController {
         let alertController = UIAlertController(title: "Sort Articles", message: "Choose sorting parameter", preferredStyle: .actionSheet)
         
         let sortByPublishDate = UIAlertAction(title: "Publish Date", style: .default) { [unowned self] _ in
-            self.sortTable(bySortBy: "publishedAt")
+            print("date")
+            self.sortTable(sortBy: "publishedAt")
         }
         let sortByRelevancy = UIAlertAction(title: "Relevancy", style: .default) { [unowned self] _ in
-            self.sortTable(bySortBy: "relevancy")
+            print("relevancy")
+            self.sortTable(sortBy: "relevancy")
         }
         let sortByPopularity = UIAlertAction(title: "Popularity", style: .default) { [unowned self] _ in
-            self.sortTable(bySortBy: "popularity")
+            print("popularity")
+            self.sortTable(sortBy: "popularity")
         }
-        let resetSort = UIAlertAction(title: "Reset sort settings", style: .default) { [unowned self] _ in
+        let resetSort = UIAlertAction(title: "Reset sorting settings", style: .default) { [unowned self] _ in
             self.resetSort()
         }
         
@@ -124,6 +135,7 @@ extension NewsViewController {
         
         configureTitleView()
         configureHistoryButton()
+        configureLeftBarItems()
         configureRightBarItems()
         configureNavigationBar()
         
@@ -176,13 +188,48 @@ extension NewsViewController {
         configureTotalResultsLabel()
     }
     
+    private func configureHistoryButton() {
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "clock", withConfiguration: configuration)
+        
+        historyButton = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(historyButtonTapped))
+        historyButton.tintColor = Colors.primaryTextColor
+    }
+    
+    private func configureLanguageButton() {
+        let sortLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let sortConfiguration = UIImage.SymbolConfiguration(font: sortLargeFont)
+        let sortImage = UIImage(systemName: "globe.europe.africa.fill", withConfiguration: sortConfiguration)
+        
+        languageButton = UIBarButtonItem(
+            image: sortImage,
+            style: .plain,
+            target: self,
+            action: #selector(languageButtonTapped)
+        )
+        
+        languageButton.tintColor = Colors.primaryTextColor
+    }
+    
+    private func configureLeftBarItems() {
+        configureHistoryButton()
+        configureLanguageButton()
+        
+        navigationItem.leftBarButtonItems = [historyButton, languageButton]
+    }
+    
     private func configureFavouriteButton() {
-        let favsLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let favsConfiguration = UIImage.SymbolConfiguration(font: favsLargeFont)
-        let favsImage = UIImage(systemName: "star", withConfiguration: favsConfiguration)
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "star", withConfiguration: configuration)
         
         favouriteButton = UIBarButtonItem(
-            image: favsImage,
+            image: image,
             style: .plain,
             target: self,
             action: #selector(favouritesButtonTapped)
@@ -192,12 +239,12 @@ extension NewsViewController {
     }
     
     private func configureSortingButton() {
-        let sortLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let sortConfiguration = UIImage.SymbolConfiguration(font: sortLargeFont)
-        let sortImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: sortConfiguration)
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: configuration)
         
         sortingButton = UIBarButtonItem(
-            image: sortImage,
+            image: image,
             style: .plain,
             target: self,
             action: #selector(showSortOptions)
@@ -211,19 +258,6 @@ extension NewsViewController {
         configureSortingButton()
         
         navigationItem.rightBarButtonItems = [favouriteButton, sortingButton]
-    }
-    
-    private func configureHistoryButton() {
-        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let configuration = UIImage.SymbolConfiguration(font: largeFont)
-        let image = UIImage(systemName: "clock", withConfiguration: configuration)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: image,
-            style: .plain,
-            target: self,
-            action: #selector(historyButtonTapped))
-        navigationItem.leftBarButtonItem?.tintColor = Colors.primaryTextColor
     }
     
     private func configureNavigationBar() {
@@ -271,7 +305,7 @@ extension NewsViewController: UISearchBarDelegate {
         self.searchText = searchText
         
         tableView.clearData()
-        print(isFiltering)
+        viewModel?.resetCurrentPage()
         viewModel?.fetchNews(keyword: searchText, needToSave: true)
         
         searchBar.resignFirstResponder()

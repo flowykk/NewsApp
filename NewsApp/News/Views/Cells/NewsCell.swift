@@ -100,10 +100,8 @@ extension NewsCell {
         )
         
         if isFavourite {
-            print("removing")
             ArticlesDatabaseManager.shared.removeArticle(article: articleDTO)
         } else {
-            print("adding")
             ArticlesDatabaseManager.shared.saveArticle(article: articleDTO)
         }
         
