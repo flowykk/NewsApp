@@ -58,7 +58,19 @@ final class ArticlesDatabaseManager: ArticlesDatabasePersistable {
     }
     
     func removeArticle(article: ArticleDTO) {
-        context?.delete(article)
+        do {
+            guard let articles = try context?.fetch(FetchDescriptor<ArticleDTO>()) else { return }
+            
+            if let index = articles.firstIndex(where: { $0.url == article.url }) {
+                let articleToDelete = articles[index]
+                
+                context?.delete(articleToDelete)
+            } else {
+                print("Article not found.")
+            }
+        } catch {
+            print("Error fetching articles: \(error.localizedDescription)")
+        }
     }
     
     func clearArticles() {
