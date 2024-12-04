@@ -30,6 +30,10 @@ final class NewsTableView: UITableView {
         }
     }
     
+    func clearData() {
+        self.articles = []
+    }
+    
     private func commonInit() {
         backgroundColor = Colors.backgroundColor
         delegate = self

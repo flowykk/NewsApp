@@ -224,11 +224,12 @@ extension NewsViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchText = searchBar.text, !searchText.isEmpty else {
-            searchTextLabel.text = "News"
+            searchTextLabel.text = "News Feed"
             return
         }
         
         searchTextLabel.text = "News about \(searchText)"
+        tableView.clearData()
         viewModel?.fetchNews(keyword: searchText, needToSave: true)
         
         searchBar.resignFirstResponder()
