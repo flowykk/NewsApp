@@ -12,6 +12,9 @@ final class NewsViewController: UIViewController {
     
     private let tableView = NewsTableView()
     private let emptyLabel = EmptyLabel(message: "Start searching News here! 🔎")
+    
+    private var favouriteButton = UIBarButtonItem()
+    private var sortingButton = UIBarButtonItem()
 
     var viewModel: NewsViewModelDelegate? {
         didSet{
@@ -121,7 +124,7 @@ extension NewsViewController {
         
         configureTitleView()
         configureHistoryButton()
-        configureFavouritesButton()
+        configureRightBarItems()
         configureNavigationBar()
         
         configureTableView()
@@ -173,22 +176,27 @@ extension NewsViewController {
         configureTotalResultsLabel()
     }
     
-    private func configureFavouritesButton() {
+    private func configureFavouriteButton() {
         let favsLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
         let favsConfiguration = UIImage.SymbolConfiguration(font: favsLargeFont)
         let favsImage = UIImage(systemName: "star", withConfiguration: favsConfiguration)
         
-        let sortLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let sortConfiguration = UIImage.SymbolConfiguration(font: sortLargeFont)
-        let sortImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: sortConfiguration)
-        
-        let favsButton = UIBarButtonItem(
+        favouriteButton = UIBarButtonItem(
             image: favsImage,
             style: .plain,
             target: self,
             action: #selector(favouritesButtonTapped)
         )
-        let sortButton = UIBarButtonItem(
+        
+        favouriteButton.tintColor = Colors.primaryTextColor
+    }
+    
+    private func configureSortingButton() {
+        let sortLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let sortConfiguration = UIImage.SymbolConfiguration(font: sortLargeFont)
+        let sortImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: sortConfiguration)
+        
+        sortingButton = UIBarButtonItem(
             image: sortImage,
             style: .plain,
             target: self,
