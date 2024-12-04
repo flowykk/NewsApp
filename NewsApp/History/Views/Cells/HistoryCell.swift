@@ -35,6 +35,7 @@ extension HistoryCell {
     }
     
     private func configureSelf() {
+        backgroundColor = Colors.backgroundColor
         selectionStyle = .none
     }
     

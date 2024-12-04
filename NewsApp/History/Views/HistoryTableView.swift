@@ -30,6 +30,7 @@ final class HistoryTableView: UITableView {
     }
     
     private func commonInit() {
+        backgroundColor = Colors.backgroundColor
         delegate = self
         dataSource = self
         register(HistoryCell.self , forCellReuseIdentifier: "historyCell")

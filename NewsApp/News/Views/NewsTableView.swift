@@ -3,6 +3,7 @@ import UIKit
 protocol NewsTableViewDelegate: AnyObject {
     
     func didSelectRow(with article: Article)
+    func didScrolledToBottom()
 }
 
 final class NewsTableView: UITableView {
@@ -22,7 +23,7 @@ final class NewsTableView: UITableView {
     }
     
     func setData(with articles: [Article]) {
-        self.articles = articles
+        self.articles.append(contentsOf: articles)
         
         DispatchQueue.main.async { [weak self] in
             self?.reloadData()
@@ -30,6 +31,7 @@ final class NewsTableView: UITableView {
     }
     
     private func commonInit() {
+        backgroundColor = Colors.backgroundColor
         delegate = self
         dataSource = self
         register(NewsCell.self , forCellReuseIdentifier: "newsCell")
@@ -56,5 +58,12 @@ extension NewsTableView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         customDelegate?.didSelectRow(with: articles[indexPath.row])
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        print(indexPath.row, articles.count)
+        if indexPath.row == articles.count - 4 {
+            customDelegate?.didScrolledToBottom()
+        }
     }
 }

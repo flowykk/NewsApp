@@ -2,11 +2,12 @@ import Foundation
 import NetworkKit
 
 protocol NewsViewModelDelegate: AnyObject {
+    
     var router: NewsRouterProtocol? { get set }
     var response: NewsResponse { get set }
     var didFetchedNews: ((NewsResponse) -> Void)? { get set }
     
-    func fetchNews(keyword: String, page: Int, pageSize: Int)
+    func fetchNews(keyword: String, needToSave: Bool)
     func saveToHistory(title: String, totalResults: String, searchDate: String)
     
     func articleDidTapped(with urlString: String)
@@ -14,7 +15,20 @@ protocol NewsViewModelDelegate: AnyObject {
     func favouritesButtonTapped()
 }
 
+extension NewsViewModelDelegate {
+    
+    func fetchNews(keyword: String, needToSave: Bool = false) {
+        return fetchNews(keyword: keyword, needToSave: needToSave)
+    }
+}
+
 final class NewsViewModel: NewsViewModelDelegate {
+    
+    // FIXME: to protocol
+    var currentPage = 1
+    let pageSize = 10
+    var isLoading = false
+    
     var router: NewsRouterProtocol?
     
     var response = NewsResponse() {
@@ -24,19 +38,32 @@ final class NewsViewModel: NewsViewModelDelegate {
     }
     var didFetchedNews: ((NewsResponse) -> Void)?
     
-    func fetchNews(keyword: String, page: Int, pageSize: Int) {
-        NetworkManager.shared.fetchNews(about: keyword, page: page, pageSize: pageSize) { (result: Result<NewsResponse, Error>) in
+    func fetchNews(keyword: String, needToSave: Bool = false) {
+        guard !isLoading else { return }
+        isLoading = true
+        
+        NetworkManager.shared.fetchNews(
+            about: keyword,
+            page: currentPage,
+            pageSize: pageSize
+        ) { (result: Result<NewsResponse, Error>) in
             switch result {
             case .success(let response):
+                self.isLoading = false
+                self.currentPage += 1
+                
                 self.response = response
                 
-                self.saveToHistory(
-                    title: keyword,
-                    totalResults: "\(response.totalResults ?? 0) Results",
-                    searchDate: Date().formattedDate()
-                )
+                if needToSave {
+                    self.saveToHistory(
+                        title: keyword,
+                        totalResults: "\(response.totalResults ?? 0) Results",
+                        searchDate: Date().formattedDate()
+                    )
+                }
             case .failure(let error):
                 // TODO: handle error with UI Alert
+                self.isLoading = false
                 print(error)
             }
         }

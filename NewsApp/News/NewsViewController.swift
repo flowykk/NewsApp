@@ -10,7 +10,6 @@ final class NewsViewController: UIViewController {
     private let tableView = NewsTableView()
     private let emptyLabel = EmptyLabel(message: "Start searching News here! 🔎")
 
-    
     var viewModel: NewsViewModelDelegate? {
         didSet{
             viewModel?.didFetchedNews = { [weak self] response in
@@ -48,6 +47,7 @@ final class NewsViewController: UIViewController {
         
         configureSearchBar()
     }
+    
 }
 
 extension NewsViewController {
@@ -209,6 +209,11 @@ extension NewsViewController: NewsTableViewDelegate {
     func didSelectRow(with article: Article) {
         viewModel?.articleDidTapped(with: article.url ?? "")
     }
+    
+    func didScrolledToBottom() {
+        guard let searchText = searchTextLabel.text else { return }
+        viewModel?.fetchNews(keyword: searchText)
+    }
 }
 
 extension NewsViewController: UISearchBarDelegate {
@@ -220,7 +225,7 @@ extension NewsViewController: UISearchBarDelegate {
         }
         
         searchTextLabel.text = "News about \(searchText)"
-        viewModel?.fetchNews(keyword: searchText, page: 1, pageSize: 10)
+        viewModel?.fetchNews(keyword: searchText, needToSave: true)
         
         searchBar.resignFirstResponder()
     }

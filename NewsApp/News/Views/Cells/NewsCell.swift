@@ -143,6 +143,7 @@ extension NewsCell {
     }
     
     private func configureSelf() {
+        backgroundColor = Colors.backgroundColor
         selectionStyle = .none
     }
     
