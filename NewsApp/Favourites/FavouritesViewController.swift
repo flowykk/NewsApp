@@ -49,7 +49,6 @@ extension FavouritesViewController {
     @objc
     private func clearHistoryButtonTapped() {
         viewModel?.clearFavouritesButtonTapped()
-        viewModel?.fetchFavourites()
     }
 }
 

@@ -9,6 +9,8 @@ protocol FavouritesViewModelDelegate: AnyObject {
     
     func backButtonTapped()
     func clearFavouritesButtonTapped()
+    
+    func clearFavourites()
 }
 
 final class FavouritesViewModel: FavouritesViewModelDelegate {
@@ -38,10 +40,15 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
     }
     
     func clearFavouritesButtonTapped() {
-        clearFavourites()
+        if favourites.isEmpty {
+            router?.presentEmptyFavouritesAlert()
+        } else {
+            router?.presentClearFavouritesAlert()
+        }
     }
     
-    private func clearFavourites() {
+    func clearFavourites() {
         ArticlesDatabaseManager.shared.clearArticles()
+        fetchFavourites()
     }
 }
