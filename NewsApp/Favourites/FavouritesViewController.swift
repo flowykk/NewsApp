@@ -4,16 +4,16 @@ import SnapKit
 final class FavouritesViewController: UIViewController {
     
     private let titleView = UIView()
-    private let FavouriteArticlesLabel = UILabel()
-    private let FavouriteArticlesItemsLabel = UILabel()
+    private let favouriteArticlesLabel = UILabel()
+    private let favouriteArticlesItemsLabel = UILabel()
     
     private let tableView = NewsTableView()
     
     var viewModel: FavouritesViewModel? {
         didSet {
             viewModel?.didFetchedFavourites = { [weak self] favourites in
-                print(favourites.count, favourites.map { $0.title })
                 self?.tableView.setData(with: favourites)
+                self?.favouriteArticlesItemsLabel.text = "\(favourites.count) Items"
             }
             viewModel?.fetchFavourites()
         }
@@ -85,14 +85,14 @@ extension FavouritesViewController {
     }
     
     private func configureSearchHistoryLabel() {
-        FavouriteArticlesLabel.textAlignment = .center
-        FavouriteArticlesLabel.text = "Favourite Articles"
-        FavouriteArticlesLabel.sizeToFit()
-        FavouriteArticlesLabel.textColor = .black
-        FavouriteArticlesLabel.font = .systemFont(ofSize: 17, weight: .bold)
+        favouriteArticlesLabel.textAlignment = .center
+        favouriteArticlesLabel.text = "Favourite Articles"
+        favouriteArticlesLabel.sizeToFit()
+        favouriteArticlesLabel.textColor = .black
+        favouriteArticlesLabel.font = .systemFont(ofSize: 17, weight: .bold)
         
-        titleView.addSubview(FavouriteArticlesLabel)
-        FavouriteArticlesLabel.snp.makeConstraints { make in
+        titleView.addSubview(favouriteArticlesLabel)
+        favouriteArticlesLabel.snp.makeConstraints { make in
             make.top.equalTo(titleView)
             make.centerX.equalTo(titleView)
             make.width.equalTo(UIScreen.main.bounds.width * 0.6)
@@ -100,15 +100,14 @@ extension FavouritesViewController {
     }
     
     private func configureSearchHistoryItemsLabel() {
-        FavouriteArticlesItemsLabel.textAlignment = .center
-        FavouriteArticlesItemsLabel.sizeToFit()
-        FavouriteArticlesItemsLabel.text = "0 Items"
-        FavouriteArticlesItemsLabel.textColor = .gray
-        FavouriteArticlesItemsLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        favouriteArticlesItemsLabel.textAlignment = .center
+        favouriteArticlesItemsLabel.sizeToFit()
+        favouriteArticlesItemsLabel.textColor = .gray
+        favouriteArticlesItemsLabel.font = .systemFont(ofSize: 14, weight: .medium)
              
-        titleView.addSubview(FavouriteArticlesItemsLabel)
-        FavouriteArticlesItemsLabel.snp.makeConstraints { make in
-            make.top.equalTo(FavouriteArticlesLabel.snp.bottom)
+        titleView.addSubview(favouriteArticlesItemsLabel)
+        favouriteArticlesItemsLabel.snp.makeConstraints { make in
+            make.top.equalTo(favouriteArticlesLabel.snp.bottom)
             make.bottom.equalTo(titleView).offset(-5)
             make.centerX.equalTo(titleView)
         }

@@ -61,21 +61,21 @@ final class ArticlesDatabaseManager: ArticlesDatabasePersistable {
         do {
             guard let articles = try context?.fetch(FetchDescriptor<ArticleDTO>()) else { return }
             
-            if let index = articles.firstIndex(where: { $0.url == article.url }) {
-                let articleToDelete = articles[index]
-                
-                context?.delete(articleToDelete)
-            } else {
-                print("Article not found.")
-            }
+            guard let index = articles.firstIndex(where: { $0.url == article.url }) else { return }
+            let articleToDelete = articles[index]
+            context?.delete(articleToDelete)
         } catch {
-            print("Error fetching articles: \(error.localizedDescription)")
+            print(error.localizedDescription)
         }
     }
     
     func clearArticles() {
         do {
-            try context?.delete(model: ArticleDTO.self)
+            guard let articles = try context?.fetch(FetchDescriptor<ArticleDTO>()) else { return }
+            
+            for article in articles {
+                context?.delete(article)
+            }
         } catch {
             print(error.localizedDescription)
         }
