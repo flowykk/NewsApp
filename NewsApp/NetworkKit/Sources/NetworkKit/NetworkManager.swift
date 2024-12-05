@@ -11,7 +11,14 @@ import Moya
 public protocol Networkable {
     var provider: MoyaProvider<API> { get }
 
-    func fetchNews<T: Codable>(about keyword: String, page: Int, pageSize: Int, completion: @escaping (Result<T, Error>) -> Void)
+    func fetchNews<T: Codable>(
+        keyword: String,
+        page: Int,
+        pageSize: Int,
+        sortBy: String?,
+        language: String?,
+        completion: @escaping (Result<T, Error>) -> Void
+    )
     func fetchNewsImage(for imageURL: String, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
@@ -21,8 +28,24 @@ public final class NetworkManager: Networkable {
 
     nonisolated(unsafe) public static let shared = NetworkManager()
 
-    public func fetchNews<T: Codable>(about keyword: String, page: Int, pageSize: Int, completion: @escaping (Result<T, Error>) -> Void) {
-        request(API.getNews(keyword: keyword, page: page, pageSize: pageSize), completion: completion)
+    public func fetchNews<T: Codable>(
+        keyword: String,
+        page: Int,
+        pageSize: Int,
+        sortBy: String?,
+        language: String?,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
+        request(
+            API.getNews(
+                keyword: keyword,
+                page: page,
+                pageSize: pageSize,
+                sortBy: sortBy,
+                language: language
+            ),
+            completion: completion
+        )
     }
 
     public func fetchNewsImage(for imageURL: String, completion: @escaping (Result<Data, Error>) -> Void) {

@@ -16,7 +16,7 @@ public enum HttpMethod: String {
 }
 
 public enum API {
-    case getNews(keyword: String, page: Int, pageSize: Int)
+    case getNews(keyword: String, page: Int, pageSize: Int, sortBy: String? = nil, language: String? = nil)
     case getNewsImage(imageURL: String)
 }
 
@@ -51,9 +51,15 @@ extension API: TargetType {
 
     public var task: Task {
         switch self {
-        case .getNews(let keyword, let page, let pageSize):
+        case .getNews(let keyword, let page, let pageSize, let sortBy, let language):
             return .requestParameters(
-                parameters: ["q": keyword, "page": page, "pageSize": pageSize],
+                parameters: [
+                    "q": keyword,
+                    "page": page,
+                    "pageSize": pageSize,
+                    "sortBy": sortBy ?? "",
+                    "language": language ?? ""
+                ],
                 encoding: URLEncoding.queryString
             )
         default:
@@ -63,7 +69,7 @@ extension API: TargetType {
 
     public var headers: [String: String]? {
         return [
-            "x-api-key": "779f499fe6b24cf98b6f3931221f34c9"
+            "x-api-key": "78a01d0db8144aa9b6ada63e7ad5deac"
         ]
     }
 

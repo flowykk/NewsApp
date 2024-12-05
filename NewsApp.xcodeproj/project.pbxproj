@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0D174B982CFDFF3F005D522E /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 0D174B972CFDFF3F005D522E /* Moya */; };
 		0D174B9B2CFDFF7B005D522E /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0D174B9A2CFDFF7B005D522E /* SnapKit */; };
+		0DABB4852D019AB500523956 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 0DABB4842D019AB500523956 /* RxCocoa */; };
 		0DFC04C02CFE071500F1166B /* NetworkKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0DFC04BF2CFE071500F1166B /* NetworkKit */; };
 /* End PBXBuildFile section */
 
@@ -20,7 +21,7 @@
 		0D174B5F2CFDFD4F005D522E /* Exceptions for "NewsApp" folder in "NewsApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Application/Info.plist,
+				Resources/Info.plist,
 			);
 			target = 0D174B4C2CFDFD4E005D522E /* NewsApp */;
 		};
@@ -44,6 +45,7 @@
 			files = (
 				0DFC04C02CFE071500F1166B /* NetworkKit in Frameworks */,
 				0D174B982CFDFF3F005D522E /* Moya in Frameworks */,
+				0DABB4852D019AB500523956 /* RxCocoa in Frameworks */,
 				0D174B9B2CFDFF7B005D522E /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,6 +100,7 @@
 				0D174B972CFDFF3F005D522E /* Moya */,
 				0D174B9A2CFDFF7B005D522E /* SnapKit */,
 				0DFC04BF2CFE071500F1166B /* NetworkKit */,
+				0DABB4842D019AB500523956 /* RxCocoa */,
 			);
 			productName = NewsApp;
 			productReference = 0D174B4D2CFDFD4E005D522E /* NewsApp.app */;
@@ -130,6 +133,7 @@
 			packageReferences = (
 				0D174B962CFDFF3F005D522E /* XCRemoteSwiftPackageReference "Moya" */,
 				0D174B992CFDFF7B005D522E /* XCRemoteSwiftPackageReference "SnapKit" */,
+				0DABB4832D019AB500523956 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0D174B4E2CFDFD4E005D522E /* Products */;
@@ -171,7 +175,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MV84AF3V6Q;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NewsApp/Application/Info.plist;
+				INFOPLIST_FILE = NewsApp/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -198,7 +202,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MV84AF3V6Q;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NewsApp/Application/Info.plist;
+				INFOPLIST_FILE = NewsApp/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -375,6 +379,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		0DABB4832D019AB500523956 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -387,6 +399,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0D174B992CFDFF7B005D522E /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		0DABB4842D019AB500523956 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0DABB4832D019AB500523956 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
 		};
 		0DFC04BF2CFE071500F1166B /* NetworkKit */ = {
 			isa = XCSwiftPackageProductDependency;
