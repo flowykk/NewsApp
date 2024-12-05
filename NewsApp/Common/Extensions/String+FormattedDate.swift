@@ -1,6 +1,7 @@
 import Foundation
 
 extension String {
+
     func toFormattedDate() -> String? {
         let isoDateFormatter = ISO8601DateFormatter()
         isoDateFormatter.formatOptions = [.withInternetDateTime]

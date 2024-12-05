@@ -1,5 +1,3 @@
-import Foundation
-
 struct SearchHistoryItemDTO: Codable {
     let title: String
     let totalResults: String

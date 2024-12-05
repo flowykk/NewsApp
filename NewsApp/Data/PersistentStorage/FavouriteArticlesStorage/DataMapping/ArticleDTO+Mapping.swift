@@ -2,7 +2,7 @@ import SwiftData
 
 @Model
 final class ArticleDTO {
-    
+
     @Attribute(.unique)
     var url: String
     var sourceName: String
@@ -10,7 +10,7 @@ final class ArticleDTO {
     var articleDescription: String
     var urlToImage: String
     var publishedAt: String
-    
+
     init(from article: Article) {
         url = article.url ?? ""
         sourceName = article.source?.name ?? ""
