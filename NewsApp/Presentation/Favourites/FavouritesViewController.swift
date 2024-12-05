@@ -1,5 +1,7 @@
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class FavouritesViewController: UIViewController {
     
@@ -12,30 +14,28 @@ final class FavouritesViewController: UIViewController {
         message: "You have no favorite articles yet! 😢\nSave some News to your favorites! ⭐️"
     )
     
-    var viewModel: FavouritesViewModel? {
-        didSet {
-            viewModel?.didFetchedFavourites = { [weak self] favourites in
-                self?.favouriteArticlesItemsLabel.text = "\(favourites.count) Items"
-                
-                self?.tableView.setData(with: favourites)
-                
-                if favourites.isEmpty {
-                    self?.tableView.isHidden = true
-                    self?.emptyLabel.isHidden = false
-                } else {
-                    self?.tableView.isHidden = false
-                    self?.emptyLabel.isHidden = true
-                }
-            }
-            viewModel?.fetchFavourites()
-        }
-    }
+    private let disposeBag = DisposeBag()
+    
+    var viewModel: FavouritesViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Colors.backgroundColor
         
         configureUI()
+        configureBinding()
+        
+        viewModel?.fetchFavourites()
+    }
+    
+    private func ifEmptyLabelNeeded(with favourites: [Article]) {
+        if favourites.isEmpty {
+            tableView.isHidden = true
+            emptyLabel.isHidden = false
+        } else {
+            tableView.isHidden = false
+            emptyLabel.isHidden = true
+        }
     }
 }
 
@@ -49,6 +49,24 @@ extension FavouritesViewController {
     @objc
     private func clearHistoryButtonTapped() {
         viewModel?.clearFavouritesButtonTapped()
+    }
+}
+
+extension FavouritesViewController {
+    
+    private func configureBinding() {
+        bindViewModelFavourites()
+    }
+    
+    private func bindViewModelFavourites() {
+        viewModel?.favourites
+            .asObservable()
+            .bind { [weak self] favourites in
+                self?.favouriteArticlesItemsLabel.text = "\(favourites.count) Items"
+                self?.tableView.setData(with: favourites)
+                self?.ifEmptyLabelNeeded(with: favourites)
+            }
+            .disposed(by: disposeBag)
     }
 }
 

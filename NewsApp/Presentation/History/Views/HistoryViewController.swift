@@ -25,6 +25,8 @@ final class HistoryViewController: UIViewController {
         
         configureUI()
         configureBinding()
+        
+        viewModel?.fetchHistory()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -61,8 +63,6 @@ extension HistoryViewController {
     private func configureBinding() {
         bindViewModelHistory()
         bindTableViewHistory()
-        
-        viewModel?.fetchHistory()
     }
     
     private func bindTableViewHistory() {

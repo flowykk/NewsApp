@@ -1,8 +1,10 @@
+import RxSwift
+import RxCocoa
+
 protocol FavouritesViewModelDelegate: AnyObject {
     
     var router: FavouritesRouterProtocol? { get set }
-    var favourites: [Article] { get set }
-    var didFetchedFavourites: (([Article]) -> Void)? { get set }
+    var favourites: BehaviorRelay<[Article]> { get set }
     
     func fetchFavourites()
     
@@ -17,12 +19,7 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
     
     var router: FavouritesRouterProtocol?
     
-    var favourites = [Article]() {
-        didSet {
-            didFetchedFavourites?(favourites)
-        }
-    }
-    var didFetchedFavourites: (([Article]) -> Void)?
+    var favourites = BehaviorRelay<[Article]>(value: [])
     
     private let favouritesUseCase: FavouriteArticlesUseCase
 
@@ -34,7 +31,7 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
         favouritesUseCase.fetchFavourites { [weak self] result in
             switch result {
             case .success(let articles):
-                self?.favourites = articles.map { $0 }
+                self?.favourites.accept(articles)
             case .failure:
                 return
             }
@@ -50,7 +47,7 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
     }
     
     func clearFavouritesButtonTapped() {
-        if favourites.isEmpty {
+        if favourites.value.isEmpty {
             router?.presentEmptyFavouritesAlert()
         } else {
             router?.presentClearFavouritesAlert()
