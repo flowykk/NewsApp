@@ -4,6 +4,8 @@
 
 Мной использовалось открытое новостное API [https://newsapi.org](https://newsapi.org).
 
+Видео с демонстрацией можно посмотреть [тут](https://youtu.be/E9X2d2KkxY8)
+
 # Архитектура
 
 Была реализована **MVVM+R + Clean Architecture** архитектура.
