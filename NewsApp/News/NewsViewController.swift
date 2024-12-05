@@ -1,10 +1,15 @@
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class NewsViewController: UIViewController {
     
     private var searchText: String? = nil
-    private var isFiltering: Bool = false
+    
+    private var isSorting = BehaviorRelay<Bool>(value: false)
+    private var isSetLanguage = BehaviorRelay<Bool>(value: false)
+    private let disposeBag = DisposeBag()
     
     private let titleView = UIView()
     private let searchTextLabel = UILabel()
@@ -58,7 +63,14 @@ final class NewsViewController: UIViewController {
     }
     
     func filterTable(sortBy: String? = nil, language: String? = nil) {
-        isFiltering = true
+        if sortBy != nil {
+            isSetLanguage.accept(false)
+            isSorting.accept(true)
+        }
+        if language != nil {
+            isSetLanguage.accept(true)
+            isSorting.accept(false)
+        }
         tableView.clearData()
         viewModel?.resetCurrentPage()
         guard let searchText = searchText else { return }
@@ -71,7 +83,9 @@ final class NewsViewController: UIViewController {
     }
     
     func resetSort() {
-        isFiltering = false
+        isSorting.accept(false)
+        isSetLanguage.accept(false)
+        print(333, isSetLanguage.value)
         tableView.clearData()
         viewModel?.resetCurrentPage()
         guard let searchText = searchText else { return }
@@ -86,9 +100,13 @@ final class NewsViewController: UIViewController {
         
         for parameter in sortParameters {
             let action = UIAlertAction(title: parameter, style: .default) { [unowned self] _ in
-                variation == FilterVariations.language ?
-                    self.filterTable(language: parameter) :
-                    self.filterTable(sortBy: parameter)
+                if parameter == "Reset filter" {
+                    self.resetSort()
+                } else {
+                    variation == FilterVariations.language ?
+                        self.filterTable(language: parameter) :
+                        self.filterTable(sortBy: parameter)
+                }
             }
             actions.append(action)
         }
@@ -226,25 +244,19 @@ extension NewsViewController {
     }
     
     private func configureLanguageButton() {
-        let sortLargeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let sortConfiguration = UIImage.SymbolConfiguration(font: sortLargeFont)
-        let sortImage = UIImage(systemName: "globe.europe.africa.fill", withConfiguration: sortConfiguration)
+        let largeFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let image = UIImage(systemName: "globe.europe.africa.fill", withConfiguration: configuration)
         
         languageButton = UIBarButtonItem(
-            image: sortImage,
+            image: image,
             style: .plain,
             target: self,
             action: #selector(showLanguageFilterOptions)
         )
         
-        languageButton.tintColor = Colors.primaryTextColor
-    }
-    
-    private func configureLeftBarItems() {
-        configureHistoryButton()
-        configureLanguageButton()
-        
-        navigationItem.leftBarButtonItems = [historyButton, languageButton]
+        subscribeLanguageButton()
+        languageButton.tintColor = Colors.tertiaryTextColor
     }
     
     private func configureFavouriteButton() {
@@ -274,7 +286,15 @@ extension NewsViewController {
             action: #selector(showSortingFilterOptions)
         )
         
-        sortingButton.tintColor = Colors.primaryTextColor
+        subscribeSortingButton()
+        sortingButton.tintColor = Colors.tertiaryTextColor
+    }
+    
+    private func configureLeftBarItems() {
+        configureHistoryButton()
+        configureLanguageButton()
+        
+        navigationItem.leftBarButtonItems = [historyButton, languageButton]
     }
     
     private func configureRightBarItems() {
@@ -314,6 +334,25 @@ extension NewsViewController: NewsTableViewDelegate {
     func didScrolledToBottom() {
         guard let searchText = self.searchText else { return }
         viewModel?.fetchNews(keyword: searchText)
+    }
+}
+
+extension NewsViewController {
+    
+    private func subscribeLanguageButton() {
+        isSetLanguage
+            .subscribe(onNext: { [weak self] value in
+                self?.languageButton.tintColor = value ?  Colors.additionalTextColor : Colors.tertiaryTextColor
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func subscribeSortingButton() {
+        isSorting
+            .subscribe(onNext: { [weak self] value in
+                self?.sortingButton.tintColor = value ?  Colors.additionalTextColor : Colors.tertiaryTextColor
+            })
+            .disposed(by: disposeBag)
     }
 }
 

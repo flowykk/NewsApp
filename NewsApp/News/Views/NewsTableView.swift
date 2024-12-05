@@ -65,7 +65,6 @@ extension NewsTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        print(indexPath.row, articles.count - 4)
         if indexPath.row >= articles.count - 4 {
             customDelegate?.didScrolledToBottom()
         }
