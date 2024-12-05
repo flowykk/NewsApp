@@ -62,37 +62,48 @@ final class NewsViewController: UIViewController {
         configureSearchBar()
     }
     
-    func filterTable(sortBy: String? = nil, language: String? = nil) {
-        if sortBy != nil {
-            isSetLanguage.accept(false)
-            isSorting.accept(true)
-        }
-        if language != nil {
-            isSetLanguage.accept(true)
-            isSorting.accept(false)
-        }
+    private func performSearch(sortBy: String? = nil, language: String? = nil, needToSave: Bool) {
         tableView.clearData()
         viewModel?.resetCurrentPage()
         guard let searchText = searchText else { return }
         viewModel?.fetchNews(
             keyword: searchText,
+            sortBy: sortBy,
+            language: language,
+            needToSave: needToSave
+        )
+    }
+    
+    private func updateParameters(isSetLanguage: Bool = false, isSorting: Bool = false) {
+        self.isSetLanguage.accept(isSetLanguage)
+        self.isSorting.accept(isSorting)
+    }
+    
+    private func filterTable(sortBy: String? = nil, language: String? = nil) {
+        if sortBy != nil {
+            updateParameters(isSetLanguage: false, isSorting: true)
+        }
+        if language != nil {
+            updateParameters(isSetLanguage: true, isSorting: false)
+        }
+        performSearch(
             sortBy: sortBy == FilterSettings.resetSettings.rawValue ? nil : sortBy,
             language: language == LanguageSettings.resetSettings.rawValue ? nil : language?.getLanguageCode(),
             needToSave: false
         )
     }
     
-    func resetSort() {
-        isSorting.accept(false)
-        isSetLanguage.accept(false)
-        print(333, isSetLanguage.value)
-        tableView.clearData()
-        viewModel?.resetCurrentPage()
-        guard let searchText = searchText else { return }
-        viewModel?.fetchNews(keyword: searchText, needToSave: false)
+    private func resetSort() {
+        updateParameters()
+        performSearch(needToSave: false)
     }
     
-    func prepareAlertActions(withVariation variation: FilterVariations) -> [UIAlertAction] {
+    private func handleNewSearch() {
+        updateParameters()
+        performSearch(needToSave: true)
+    }
+    
+    private func prepareAlertActions(withVariation variation: FilterVariations) -> [UIAlertAction] {
         var actions = [UIAlertAction]()
         let sortParameters = variation == FilterVariations.language ?
             LanguageSettings.allCases.map { $0.rawValue } :
@@ -365,12 +376,9 @@ extension NewsViewController: UISearchBarDelegate {
             return
         }
         
-        searchTextLabel.text = searchText
         self.searchText = searchText
-        
-        tableView.clearData()
-        viewModel?.resetCurrentPage()
-        viewModel?.fetchNews(keyword: searchText, needToSave: true)
+        searchTextLabel.text = searchText
+        handleNewSearch()
         
         searchBar.resignFirstResponder()
     }
