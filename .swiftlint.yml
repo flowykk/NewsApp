@@ -1,0 +1,12 @@
+function_parameter_count:
+  warning: 6
+  error: 7
+
+included:
+  - "NewsApp"
+  - "*/*.swift"
+  - "*/**/*.swift"
+excluded:
+  - "*.yml"
+  - "*.xcodeproj"
+  - ".git"

@@ -1,11 +1,11 @@
 protocol FavouriteArticlesUseCase {
-    
+
     func fetchFavourites(completion: @escaping (Result<[Article], Error>) -> Void)
     func clearFavourites()
 }
 
 final class DefaultFavouriteArticlesUseCase: FavouriteArticlesUseCase {
-    
+
     private let repository: FavouriteArticlesRepository
 
     init(repository: FavouriteArticlesRepository) {

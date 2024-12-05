@@ -1,6 +1,5 @@
-import Foundation
-
 struct Article: Codable {
+
     let source: Source?
     let title: String?
     let description: String?
@@ -8,7 +7,7 @@ struct Article: Codable {
     let urlToImage: String?
     let publishedAt: String?
     let content: String?
-    
+
     init(
         source: String,
         title: String,

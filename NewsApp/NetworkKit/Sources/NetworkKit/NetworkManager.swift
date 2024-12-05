@@ -1,12 +1,5 @@
-//
-//  File.swift
-//  NetworkKit
-//
-//  Created by Данила Рахманов on 27.10.2024.
-//
-
-import Foundation
 import Moya
+import Foundation
 
 public protocol Networkable {
     var provider: MoyaProvider<API> { get }

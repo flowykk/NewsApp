@@ -1,15 +1,15 @@
 import Foundation
 
 protocol NewsViewModelDelegate: AnyObject {
-    
+
     var router: NewsRouterProtocol? { get set }
     var response: NewsResponse { get set }
     var didFetchedNews: ((NewsResponse) -> Void)? { get set }
-    
+
     func fetchNews(keyword: String, sortBy: String?, language: String?, needToSave: Bool)
     func saveToHistory(title: String, totalResults: String, searchDate: String)
     func resetCurrentPage()
-        
+
     func articleDidTapped(with urlString: String)
     func filterButtonTappedWithNoData()
     func historyButtonTapped()
@@ -17,38 +17,37 @@ protocol NewsViewModelDelegate: AnyObject {
 }
 
 extension NewsViewModelDelegate {
-    
+
     func fetchNews(keyword: String, sortBy: String? = nil, language: String? = nil, needToSave: Bool = false) {
         return fetchNews(keyword: keyword, sortBy: sortBy, language: language, needToSave: needToSave)
     }
 }
 
 final class NewsViewModel: NewsViewModelDelegate {
-    
-    // FIXME: to protocol
+
     var currentPage = 1
     let pageSize = 10
     var isLoading = false
-    
+
     var router: NewsRouterProtocol?
-    
+
     var response = NewsResponse() {
         didSet {
             didFetchedNews?(response)
         }
     }
     var didFetchedNews: ((NewsResponse) -> Void)?
-    
+
     private let newsUseCase: NewsUseCase
-    
+
     init(newsUseCase: NewsUseCase) {
         self.newsUseCase = newsUseCase
     }
-    
+
     func fetchNews(keyword: String, sortBy: String? = nil, language: String? = nil, needToSave: Bool = false) {
         guard !isLoading else { return }
         isLoading = true
-        
+
         newsUseCase.fetchNews(
             keyword: keyword,
             page: currentPage,
@@ -60,9 +59,9 @@ final class NewsViewModel: NewsViewModelDelegate {
             case .success(let response):
                 self.isLoading = false
                 self.currentPage += 1
-                
+
                 self.response = response
-                
+
                 if needToSave {
                     self.saveToHistory(
                         title: keyword,
@@ -70,32 +69,33 @@ final class NewsViewModel: NewsViewModelDelegate {
                         searchDate: Date().formattedDate()
                     )
                 }
-            case .failure(let error):
+            // swiftlint:disable:next empty_enum_arguments
+            case .failure(_):
                 self.router?.presentNoDataAlert()
             }
         }
     }
-    
+
     func saveToHistory(title: String, totalResults: String, searchDate: String) {
         newsUseCase.saveSearchHistory(title: title, totalResults: totalResults, searchDate: searchDate)
     }
-    
+
     func resetCurrentPage() {
         currentPage = 1
     }
-    
+
     func articleDidTapped(with urlString: String) {
         router?.showArticleInBrowser(urlString: urlString)
     }
-    
+
     func filterButtonTappedWithNoData() {
         router?.presentNoDataAlert()
     }
-    
+
     func historyButtonTapped() {
         router?.navigateToHistory()
     }
-    
+
     func favouritesButtonTapped() {
         router?.navigateToFavourites()
     }

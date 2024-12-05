@@ -1,12 +1,5 @@
-//
-//  File.swift
-//  NetworkKit
-//
-//  Created by Данила Рахманов on 27.10.2024.
-//
-
-import Foundation
 import Moya
+import Foundation
 
 public enum HttpMethod: String {
     case get = "GET"
