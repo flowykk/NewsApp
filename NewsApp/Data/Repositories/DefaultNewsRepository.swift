@@ -12,6 +12,7 @@ final class DefaultNewsRepository: NewsRepository {
             sortBy: sortBy,
             language: language
         ) { (result: Result<NewsResponse, Error>) in
+            print(result)
             completion(result)
         }
     }

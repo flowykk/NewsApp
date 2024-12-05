@@ -71,9 +71,7 @@ final class NewsViewModel: NewsViewModelDelegate {
                     )
                 }
             case .failure(let error):
-                // TODO: handle error with UI Alert
-                self.isLoading = false
-                print(error)
+                self.router?.presentNoDataAlert()
             }
         }
     }

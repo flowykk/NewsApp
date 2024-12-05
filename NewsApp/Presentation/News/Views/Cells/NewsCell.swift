@@ -211,7 +211,7 @@ extension NewsCell {
         contentView.addSubview(newsSourceLabel)
         newsSourceLabel.snp.makeConstraints { make in
             make.top.equalTo(newsDescriptionLabel.snp.bottom).offset(15)
-            make.width.equalTo(UIScreen.main.bounds.width * 0.42)
+            make.width.equalTo(UIScreen.main.bounds.width * 0.40)
             make.left.equalTo(newsDateLabel.snp.right).offset(10)
             make.bottom.equalTo(contentView).offset(-1 * 20)
         }

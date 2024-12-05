@@ -69,7 +69,7 @@ extension API: TargetType {
 
     public var headers: [String: String]? {
         return [
-            "x-api-key": "78a01d0db8144aa9b6ada63e7ad5deac"
+            "x-api-key": "111f4367e3044eac908d1478326902c6"
         ]
     }
 
