@@ -79,9 +79,7 @@ extension HistoryViewController {
         viewModel?.history
             .asObservable()
             .bind { [weak self] history in
-                self?.searchHistoryItemsLabel.text = "\(history.count) Items"
                 self?.tableView.setData(with: history)
-                self?.ifEmptyLabelNeeded(with: history)
             }
             .disposed(by: disposeBag)
     }
