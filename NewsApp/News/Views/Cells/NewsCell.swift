@@ -18,6 +18,7 @@ final class NewsCell: UITableViewCell {
 
     var viewModel: NewsImageViewModelDelegate? {
         didSet {
+            newsImageView.image = nil
             activityIndicator.startAnimating()
             viewModel?.didFetchedNewsImage = { [weak self] image in
                 DispatchQueue.main.async {
@@ -41,6 +42,12 @@ final class NewsCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        newsImageView.image = nil
+    }
 
     func set(with article: Article) {
         self.article = article
@@ -54,16 +61,7 @@ final class NewsCell: UITableViewCell {
               let _ = URL(string: urlToImageString)
         else {
             activityIndicator.stopAnimating()
-            
             newsImageView.image = UIImage(named: "placeholder")
-            
-//            newsImageView.image = nil
-//            newsImageView.snp.makeConstraints { make in
-//                make.height.equalTo(0)
-//            }
-//            newsTitleLabel.snp.makeConstraints { make in
-//                make.top.equalTo(self).offset(15)
-//            }
                 
             return
         }
