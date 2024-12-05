@@ -13,7 +13,7 @@ final class NewsCell: UITableViewCell {
     private let newsTitleLabel = UILabel()
     private let newsDescriptionLabel = UILabel()
     private let newsDateLabel = UILabel()
-    private let newsAuthorLabel = UILabel()
+    private let newsSourceLabel = UILabel()
     private let favouriteButton = UIButton()
 
     var viewModel: NewsImageViewModelDelegate? {
@@ -55,7 +55,7 @@ final class NewsCell: UITableViewCell {
         newsTitleLabel.text = article.title
         newsDescriptionLabel.text = article.description
         newsDateLabel.text = article.publishedAt?.toFormattedDate()
-        newsAuthorLabel.text = "/ " + (article.source?.name ?? "no source")
+        newsSourceLabel.text = "/ " + (article.source?.name ?? "no source")
         
         guard let urlToImageString = article.urlToImage,
               let _ = URL(string: urlToImageString)
@@ -134,7 +134,7 @@ extension NewsCell {
         configureNewsTitleLabel()
         configureNewsDescriptionLabel()
         configureNewsDateLabel()
-        configureNewsAuthorLabel()
+        configureNewsSourceLabel()
         configureFavouriteButton()
     }
     
@@ -210,17 +210,17 @@ extension NewsCell {
         }
     }
     
-    private func configureNewsAuthorLabel() {
-        newsAuthorLabel.textAlignment = .right
-        newsAuthorLabel.textColor = Colors.tertiaryTextColor
-        newsAuthorLabel.numberOfLines = 1
-        newsAuthorLabel.font = UIFont(name: "SFMono-Regular", size: 15)
+    private func configureNewsSourceLabel() {
+        newsSourceLabel.textAlignment = .left
+        newsSourceLabel.textColor = Colors.tertiaryTextColor
+        newsSourceLabel.numberOfLines = 1
+        newsSourceLabel.font = UIFont(name: "SFMono-Regular", size: 15)
         
-        contentView.addSubview(newsAuthorLabel)
-        newsAuthorLabel.snp.makeConstraints { make in
+        contentView.addSubview(newsSourceLabel)
+        newsSourceLabel.snp.makeConstraints { make in
             make.top.equalTo(newsDescriptionLabel.snp.bottom).offset(15)
-            make.left.equalTo(newsDateLabel.snp.right).offset(10)
             make.width.equalTo(UIScreen.main.bounds.width * 0.42)
+            make.left.equalTo(newsDateLabel.snp.right).offset(10)
             make.bottom.equalTo(contentView).offset(-1 * 20)
         }
     }
