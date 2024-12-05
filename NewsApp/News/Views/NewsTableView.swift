@@ -3,12 +3,17 @@ import UIKit
 protocol NewsTableViewDelegate: AnyObject {
     
     func didSelectRow(with article: Article)
+}
+
+protocol NewsTableViewPaginationDelegate: AnyObject {
+    
     func didScrolledToBottom()
 }
 
 final class NewsTableView: UITableView {
     
-    weak var customDelegate: NewsTableViewDelegate?
+    weak var defaultDelegate: NewsTableViewDelegate?
+    weak var paginationDelegate: NewsTableViewPaginationDelegate?
     
     var articles: [Article] = []
     
@@ -61,12 +66,12 @@ extension NewsTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        customDelegate?.didSelectRow(with: articles[indexPath.row])
+        defaultDelegate?.didSelectRow(with: articles[indexPath.row])
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row >= articles.count - 4 {
-            customDelegate?.didScrolledToBottom()
+            paginationDelegate?.didScrolledToBottom()
         }
     }
 }

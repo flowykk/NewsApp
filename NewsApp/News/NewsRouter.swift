@@ -1,8 +1,23 @@
 import Foundation
 import SafariServices
 
+protocol WebRouterProtocol {
+    
+    func openWebPage(from view: UIViewController?, urlString: String)
+}
+
+class WebRouter: WebRouterProtocol {
+    
+    func openWebPage(from view: UIViewController?, urlString: String) {
+        guard let webURL = URL(string: urlString), let view else { return }
+        
+        let safariVC = SFSafariViewController(url: webURL)
+        view.present(safariVC, animated: true, completion: nil)
+    }
+}
 
 protocol NewsRouterProtocol {
+    
     var view: NewsViewController? { get set }
     
     func showArticleInBrowser(urlString: String)
@@ -13,15 +28,17 @@ protocol NewsRouterProtocol {
 }
 
 final class NewsRouter: NewsRouterProtocol {
+    
     weak var view: NewsViewController?
     
-    func showArticleInBrowser(urlString: String) {
-        guard let webURL = URL(string: urlString) else {
-            return
-        }
+    private let webRouter: WebRouterProtocol
     
-        let safariVC = SFSafariViewController(url: webURL)
-        view?.present(safariVC, animated: true, completion: nil)
+    init(webRouter: WebRouterProtocol) {
+        self.webRouter = webRouter
+    }
+    
+    func showArticleInBrowser(urlString: String) {
+        webRouter.openWebPage(from: view, urlString: urlString)
     }
     
     func navigateToHistory() {

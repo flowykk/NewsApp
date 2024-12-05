@@ -7,6 +7,7 @@ protocol FavouritesRouterProtocol {
     
     func navigateToNews()
     
+    func showArticleInBrowser(urlString: String)
     func presentClearFavouritesAlert()
     func presentEmptyFavouritesAlert()
 }
@@ -14,6 +15,16 @@ protocol FavouritesRouterProtocol {
 final class FavouritesRouter: FavouritesRouterProtocol {
     
     weak var view: FavouritesViewController?
+    
+    private let webRouter: WebRouterProtocol
+    
+    init(webRouter: WebRouterProtocol) {
+        self.webRouter = webRouter
+    }
+    
+    func showArticleInBrowser(urlString: String) {
+        webRouter.openWebPage(from: view, urlString: urlString)
+    }
     
     func navigateToNews() {
         view?.navigationController?.popViewController(animated: true)

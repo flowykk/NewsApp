@@ -309,7 +309,8 @@ extension NewsViewController {
     }
     
     private func configureTableView() {
-        tableView.customDelegate = self
+        tableView.defaultDelegate = self
+        tableView.paginationDelegate = self
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
@@ -325,7 +326,7 @@ extension NewsViewController {
     }
 }
 
-extension NewsViewController: NewsTableViewDelegate {
+extension NewsViewController: NewsTableViewDelegate, NewsTableViewPaginationDelegate {
     
     func didSelectRow(with article: Article) {
         viewModel?.articleDidTapped(with: article.url ?? "")

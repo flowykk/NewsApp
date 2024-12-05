@@ -131,6 +131,8 @@ extension FavouritesViewController {
     }
     
     private func configureTableView() {
+        tableView.defaultDelegate = self
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -142,5 +144,12 @@ extension FavouritesViewController {
         emptyLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+}
+
+extension FavouritesViewController: NewsTableViewDelegate {
+    
+    func didSelectRow(with article: Article) {
+        viewModel?.articleDidTapped(with: article.url ?? "")
     }
 }

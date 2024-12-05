@@ -5,7 +5,9 @@ final class FavouritesBuilder {
     static func build() -> UIViewController {
         let viewModel = FavouritesViewModel()
         let view = FavouritesViewController()
-        let router = FavouritesRouter()
+        
+        let webRouter = WebRouter()
+        let router = FavouritesRouter(webRouter: webRouter)
         
         view.viewModel = viewModel
         viewModel.router = router

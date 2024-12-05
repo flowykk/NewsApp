@@ -7,6 +7,7 @@ protocol FavouritesViewModelDelegate: AnyObject {
     
     func fetchFavourites()
     
+    func articleDidTapped(with urlString: String)
     func backButtonTapped()
     func clearFavouritesButtonTapped()
     
@@ -33,6 +34,10 @@ final class FavouritesViewModel: FavouritesViewModelDelegate {
                 return
             }
         }
+    }
+    
+    func articleDidTapped(with urlString: String) {
+        router?.showArticleInBrowser(urlString: urlString)
     }
     
     func backButtonTapped() {
