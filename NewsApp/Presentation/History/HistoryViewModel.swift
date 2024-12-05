@@ -1,6 +1,9 @@
+import RxSwift
+import RxCocoa
+
 protocol HistoryViewModelDelegate: AnyObject {
     var router: HistoryRouterProtocol? { get set }
-    var history: [SearchHistoryItem] { get set }
+    var history: BehaviorRelay<[SearchHistoryItem]> { get set }
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)? { get set }
     
     func fetchHistory()
@@ -16,21 +19,25 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     
     var router: HistoryRouterProtocol?
     
-    var history = [SearchHistoryItem]() {
-        didSet {
-            didFetchedHistory?(history)
-        }
-    }
+    var history = BehaviorRelay<[SearchHistoryItem]>(value: [])
     var didFetchedHistory: (([SearchHistoryItem]) -> Void)?
     
     private let searchHistoryRepository: SearchHistoryRepository
+    private let disposeBag = DisposeBag()
     
     init(searchHistoryRepository: SearchHistoryRepository) {
         self.searchHistoryRepository = searchHistoryRepository
+        
+        history
+            .asObservable()
+            .subscribe(onNext: { [weak self] historyItems in
+                self?.didFetchedHistory?(historyItems)
+            })
+            .disposed(by: disposeBag)
     }
     
     func fetchHistory() {
-        history = searchHistoryRepository.fetchSearches()
+        history.accept(searchHistoryRepository.fetchSearches())
     }
     
     func deleteFromHistory(search: SearchHistoryItem) {
@@ -42,7 +49,7 @@ final class HistoryViewModel: HistoryViewModelDelegate {
     }
     
     func clearHistoryButtonTapped() {
-        if history.isEmpty {
+        if history.value.isEmpty {
             router?.presentEmptyHistoryAlert()
         } else {
             router?.presentClearHistoryAlert()

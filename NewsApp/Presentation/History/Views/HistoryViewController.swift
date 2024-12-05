@@ -1,7 +1,11 @@
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class HistoryViewController: UIViewController {
+    
+    var viewModel: HistoryViewModelDelegate?
     
     private let titleView = UIView()
     private let searchHistoryLabel = UILabel()
@@ -12,24 +16,7 @@ final class HistoryViewController: UIViewController {
         message: "You have no searches yet! 😢\nLet's Search for news together! 🤭"
     )
     
-    var viewModel: HistoryViewModelDelegate? {
-        didSet {
-            viewModel?.didFetchedHistory = { [weak self] history in
-                self?.searchHistoryItemsLabel.text = "\(history.count) Items"
-                
-                self?.tableView.setData(with: history)
-                
-                if history.isEmpty {
-                    self?.tableView.isHidden = true
-                    self?.emptyLabel.isHidden = false
-                } else {
-                    self?.tableView.isHidden = false
-                    self?.emptyLabel.isHidden = true
-                }
-            }
-            viewModel?.fetchHistory()
-        }
-    }
+    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,11 +24,22 @@ final class HistoryViewController: UIViewController {
         view.backgroundColor = Colors.backgroundColor
         
         configureUI()
+        configureBinding()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.delegate = self
+    }
+    
+    private func ifEmptyLabelNeeded(with history: [SearchHistoryItem]) {
+        if history.isEmpty {
+            tableView.isHidden = true
+            emptyLabel.isHidden = false
+        } else {
+            tableView.isHidden = false
+            emptyLabel.isHidden = true
+        }
     }
 }
 
@@ -55,6 +53,37 @@ extension HistoryViewController {
     @objc
     private func clearHistoryButtonTapped() {
         viewModel?.clearHistoryButtonTapped()
+    }
+}
+
+extension HistoryViewController {
+    
+    private func configureBinding() {
+        bindViewModelHistory()
+        bindTableViewHistory()
+        
+        viewModel?.fetchHistory()
+    }
+    
+    private func bindTableViewHistory() {
+        tableView.history
+            .asObservable()
+            .bind { [weak self] history in
+                self?.searchHistoryItemsLabel.text = "\(history.count) Items"
+                self?.ifEmptyLabelNeeded(with: history)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindViewModelHistory() {
+        viewModel?.history
+            .asObservable()
+            .bind { [weak self] history in
+                self?.searchHistoryItemsLabel.text = "\(history.count) Items"
+                self?.tableView.setData(with: history)
+                self?.ifEmptyLabelNeeded(with: history)
+            }
+            .disposed(by: disposeBag)
     }
 }
 

@@ -1,4 +1,6 @@
 import UIKit
+import RxSwift
+import RxCocoa
 
 protocol HistoryTableViewDelegate: AnyObject {
     
@@ -9,7 +11,7 @@ final class HistoryTableView: UITableView {
     
     weak var customDelegate: HistoryTableViewDelegate?
     
-    var history: [SearchHistoryItem] = []
+    var history = BehaviorRelay<[SearchHistoryItem]>(value: [])
     
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
@@ -22,7 +24,7 @@ final class HistoryTableView: UITableView {
     }
     
     func setData(with history: [SearchHistoryItem]) {
-        self.history = history
+        self.history.accept(history)
         
         DispatchQueue.main.async { [weak self] in
             self?.reloadData()
@@ -43,13 +45,13 @@ final class HistoryTableView: UITableView {
 extension HistoryTableView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return history.count
+        return history.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "historyCell", for: indexPath) as! HistoryCell
         
-        let item = history[indexPath.row]
+        let item = history.value[indexPath.row]
         cell.set(with: item)
         
         return cell
@@ -57,8 +59,11 @@ extension HistoryTableView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            customDelegate?.didDeleteRow(with: history[indexPath.row])
-            history.remove(at: indexPath.row)
+            customDelegate?.didDeleteRow(with: history.value[indexPath.row])
+            
+            var currentHistory = history.value
+            currentHistory.remove(at: indexPath.row)
+            history.accept(currentHistory)
             
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
