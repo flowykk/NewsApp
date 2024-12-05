@@ -7,8 +7,8 @@ final class NewsViewController: UIViewController {
     
     private var searchText: String? = nil
     
-    private var isSorting = BehaviorRelay<Bool>(value: false)
-    private var isSetLanguage = BehaviorRelay<Bool>(value: false)
+    private var sortParameter = BehaviorRelay<String?>(value: nil)
+    private var languageParameter = BehaviorRelay<String?>(value: nil)
     private let disposeBag = DisposeBag()
     
     private let titleView = UIView()
@@ -69,33 +69,35 @@ final class NewsViewController: UIViewController {
         viewModel?.fetchNews(
             keyword: searchText,
             sortBy: sortBy,
-            language: language,
+            language: language?.getLanguageCode(),
             needToSave: needToSave
         )
     }
     
-    private func updateParameters(isSetLanguage: Bool = false, isSorting: Bool = false) {
-        self.isSetLanguage.accept(isSetLanguage)
-        self.isSorting.accept(isSorting)
+    private func updateParameters(languageParameter: String? = nil, sortParameter: String? = nil) {
+        self.languageParameter.accept(languageParameter)
+        self.sortParameter.accept(sortParameter)
     }
     
     private func filterTable(sortBy: String? = nil, language: String? = nil) {
-        if sortBy != nil {
-            updateParameters(isSetLanguage: false, isSorting: true)
-        }
-        if language != nil {
-            updateParameters(isSetLanguage: true, isSorting: false)
-        }
+        updateParameters(languageParameter: language, sortParameter: sortBy)
         performSearch(
-            sortBy: sortBy == FilterSettings.resetSettings.rawValue ? nil : sortBy,
-            language: language == LanguageSettings.resetSettings.rawValue ? nil : language?.getLanguageCode(),
+            sortBy: sortParameter.value,
+            language: languageParameter.value,
             needToSave: false
         )
     }
     
-    private func resetSort() {
-        updateParameters()
-        performSearch(needToSave: false)
+    private func resetSort(for variation: FilterVariations) {
+        variation == FilterVariations.language ?
+        updateParameters(languageParameter: nil, sortParameter: sortParameter.value) :
+        updateParameters(languageParameter: languageParameter.value, sortParameter: nil)
+        
+        performSearch(
+            sortBy: sortParameter.value,
+            language: languageParameter.value,
+            needToSave: false
+        )
     }
     
     private func handleNewSearch() {
@@ -110,13 +112,14 @@ final class NewsViewController: UIViewController {
             FilterSettings.allCases.map { $0.rawValue }
         
         for parameter in sortParameters {
-            let action = UIAlertAction(title: parameter, style: .default) { [unowned self] _ in
+            let capitalizedParameter = parameter.prefix(1).capitalized + parameter.dropFirst()
+            let action = UIAlertAction(title: capitalizedParameter, style: .default) { [unowned self] _ in
                 if parameter == "Reset filter" {
-                    self.resetSort()
+                    self.resetSort(for: variation)
                 } else {
                     variation == FilterVariations.language ?
-                        self.filterTable(language: parameter) :
-                        self.filterTable(sortBy: parameter)
+                    self.filterTable(sortBy: sortParameter.value, language: parameter) :
+                    self.filterTable(sortBy: parameter, language: languageParameter.value)
                 }
             }
             actions.append(action)
@@ -337,6 +340,25 @@ extension NewsViewController {
     }
 }
 
+extension NewsViewController {
+    
+    private func subscribeLanguageButton() {
+        languageParameter
+            .subscribe(onNext: { [weak self] parameter in
+                self?.languageButton.tintColor = parameter != nil ?  Colors.additionalTextColor : Colors.tertiaryTextColor
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func subscribeSortingButton() {
+        sortParameter
+            .subscribe(onNext: { [weak self] parameter in
+                self?.sortingButton.tintColor = parameter != nil ?  Colors.additionalTextColor : Colors.tertiaryTextColor
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
 extension NewsViewController: NewsTableViewDelegate, NewsTableViewPaginationDelegate {
     
     func didSelectRow(with article: Article) {
@@ -346,25 +368,6 @@ extension NewsViewController: NewsTableViewDelegate, NewsTableViewPaginationDele
     func didScrolledToBottom() {
         guard let searchText = self.searchText else { return }
         viewModel?.fetchNews(keyword: searchText)
-    }
-}
-
-extension NewsViewController {
-    
-    private func subscribeLanguageButton() {
-        isSetLanguage
-            .subscribe(onNext: { [weak self] value in
-                self?.languageButton.tintColor = value ?  Colors.additionalTextColor : Colors.tertiaryTextColor
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    private func subscribeSortingButton() {
-        isSorting
-            .subscribe(onNext: { [weak self] value in
-                self?.sortingButton.tintColor = value ?  Colors.additionalTextColor : Colors.tertiaryTextColor
-            })
-            .disposed(by: disposeBag)
     }
 }
 
